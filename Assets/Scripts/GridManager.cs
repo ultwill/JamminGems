@@ -19,7 +19,7 @@ public class GridManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        checkForMatch();
     }
 
     public static Vector2Int roundVec2(Vector2 v)
@@ -43,19 +43,98 @@ public class GridManager : MonoBehaviour
         Sprite temp = renderer1.sprite;
         renderer1.sprite = renderer2.sprite;
         renderer2.sprite = temp;
-}
-    public static void checkForMatch()
-    {
-        //Check if 3+ adjacent gems are of the same type
     }
-    public static void deleteGems()
+    GameObject GetGemAt(int column, int row)
     {
-        //To be filled in with a function to delete matched gems
+        if (column < 0 || column >= gridWidth
+            || row < 0 || row >= gridHeight)
+            {return null;}
+
+        Collider2D intersecting = Physics2D.OverlapCircle(new Vector2 (column, row), 0.1f);// Physics.OverlapSphere(new Vector3(column, row, 0), 0.1f);
+        if (intersecting == null)
+            {return null;}
+        else 
+        {
+            Transform tile = grid[column, row];
+            GameObject gem = tile.gameObject;
+            print(gem.GetComponent<SpriteRenderer>().sprite.name + " found at [" + column + "," + row + "]");
+            return gem;
+        }
     }
 
-    public static void dropGems()
+    public bool checkForMatch()
     {
-        //Make gems that have no placed gem beneath them to fall until they hit
-        // either the bottom or a placed gem
+        HashSet<GameObject> matchedGems = new HashSet<GameObject>();
+        for (int row = 0; row < gridHeight; row++)
+        {
+            for (int column = 0; column < gridWidth; column++)
+            {
+                GameObject currentGem = GetGemAt(column, row);
+                if (currentGem == null)
+                    {continue;}
+                
+                List<GameObject> horizontalMatches = FindColumnMatchForTile(column, row, currentGem);
+                List<GameObject> verticalMatches = FindRowMatchForTile(column, row, currentGem);
+                if ((horizontalMatches.Count >= 2))// || (verticalMatches.Count > 0))
+                {
+                    matchedGems.Add(currentGem);
+                    matchedGems.UnionWith(horizontalMatches);
+                    //matchedGems.UnionWith(verticalMatches);
+                }
+
+                 
+                if (verticalMatches.Count >= 2)
+                {
+                    matchedGems.UnionWith(verticalMatches);
+                    matchedGems.Add(currentGem);
+                }
+            }
+        }
+        if (matchedGems.Count >= 3)
+        {
+            foreach (GameObject gem in matchedGems)
+                {Destroy(gem);}
+            //TODO: Add Score
+            print(matchedGems.Count > 0);
+            return (matchedGems.Count > 0);
+        }
+        return false;
+    }
+
+    List<GameObject> FindColumnMatchForTile(int column, int row, GameObject currentGem)
+    {
+        List<GameObject> result = new List<GameObject>();
+        for (int i = column + 1; i < gridWidth; i++)
+        {
+            GameObject nextGem = GetGemAt(i, row);
+            if (nextGem == null)
+                {break;}
+            if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
+                {print("Test");break;}
+            if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
+                {result.Add(nextGem);print(result.Count + " Horizontal matches");}
+        }
+        return result;
+    }
+
+    List<GameObject> FindRowMatchForTile(int column, int row, GameObject currentGem)
+    {
+        List<GameObject> result = new List<GameObject>();
+        for (int i = row + 1; i < gridHeight; i++)
+        {
+            GameObject nextGem = GetGemAt(column, i);
+            if (nextGem == null)
+                {break;}
+
+            if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
+                {break;}
+            if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
+                {result.Add(nextGem);print(result.Count + " Vertical matches");}
+        }
+        return result;
+    }
+    public void deleteGems()
+    {
+        //TODO: Delete matched gems
     }
 }

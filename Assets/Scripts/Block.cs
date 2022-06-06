@@ -12,10 +12,12 @@ public class Block : MonoBehaviour
     public bool isFalling = true;
     private float lastFall = 0;
     private float currentFallRate;
+    private GridManager gridManager;
     
     // Start is called before the first frame update
     void Start()
     {
+        GridManager gridManager = FindObjectOfType<GridManager>();
         // Randomize each gem in the block
         foreach (Transform child in transform)
         {
@@ -46,7 +48,7 @@ public class Block : MonoBehaviour
     void moveBlock()
     {
         // Move Left
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             // Modify position
             transform.position += new Vector3(-1, 0, 0);
@@ -59,7 +61,7 @@ public class Block : MonoBehaviour
                 {transform.position += new Vector3(1, 0, 0);}
         }
         // Move Right
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             // Modify position
             transform.position += new Vector3(1, 0, 0);
@@ -72,7 +74,7 @@ public class Block : MonoBehaviour
                 {transform.position += new Vector3(-1, 0, 0);}
         }
         // Move Downwards and Fast Fall
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
             //|| Time.time - lastFall >= currentFallRate)
         {
             // float counter = 0;
@@ -100,7 +102,7 @@ public class Block : MonoBehaviour
                 // If it's not valid, revert.
                 transform.position += new Vector3(0, fallDistance, 0);
 
-                GridManager.checkForMatch();
+                //gridManager.checkForMatch();
 
                 // Spawn next Group
                 FindObjectOfType<Spawner>().spawnNext();
@@ -117,12 +119,12 @@ public class Block : MonoBehaviour
             
             print("Later fall speed of " + currentFallRate);
         }
-        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        else if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
                 {currentFallRate = fallRate;
                 print("Key up fall speed of " + currentFallRate);}
 
         // Instant Drop
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             currentFallRate = instantDropFallRate;
 
@@ -137,7 +139,7 @@ public class Block : MonoBehaviour
                 // If it's not valid, revert.
                 transform.position += new Vector3(0, fallDistance, 0);
 
-                GridManager.checkForMatch();
+                //gridManager.checkForMatch();
 
                 // Spawn next Group
                 FindObjectOfType<Spawner>().spawnNext();
@@ -167,7 +169,7 @@ public class Block : MonoBehaviour
                 // If it's not valid, revert.
                 transform.position += new Vector3(0, fallDistance, 0);
 
-                GridManager.checkForMatch();
+                //GridManager.checkForMatch();
 
                 // Spawn next Group
                 FindObjectOfType<Spawner>().spawnNext();
