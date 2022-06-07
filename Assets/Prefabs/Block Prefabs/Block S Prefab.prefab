@@ -124,6 +124,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6aac59623a824b3787bd01a0693dea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gemFallRate: 0.05
+  intPosition: {x: 0, y: 0}
+  isFalling: 1
+  posBelow: {fileID: 0}
 --- !u!1 &3591988040653713137
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,6 +252,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6aac59623a824b3787bd01a0693dea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gemFallRate: 0.05
+  intPosition: {x: 0, y: 0}
+  isFalling: 1
+  posBelow: {fileID: 0}
 --- !u!1 &4270079019493613001
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,6 +380,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6aac59623a824b3787bd01a0693dea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gemFallRate: 0.05
+  intPosition: {x: 0, y: 0}
+  isFalling: 1
+  posBelow: {fileID: 0}
 --- !u!1 &5677842251346661822
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,6 +432,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af73577f56ae415180aa8ecb5d4d552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fallRate: 0.5
+  fallDistance: 1
+  heldInputDelay: 0.1
+  fastFallRate: 0.05
+  instantDropFallRate: 0.0001
+  isFalling: 1
 --- !u!1 &8073541360882240722
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,3 +562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6aac59623a824b3787bd01a0693dea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gemFallRate: 0.05
+  intPosition: {x: 0, y: 0}
+  isFalling: 1
+  posBelow: {fileID: 0}

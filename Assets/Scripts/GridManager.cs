@@ -7,13 +7,11 @@ public class GridManager : MonoBehaviour
     public static int gridWidth = 10;
     public static int gridHeight = 25;
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
+    GameSession gameSession;    
     
-    
-    
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        gameSession = FindObjectOfType<GameSession>();
     }
 
     // Update is called once per frame
@@ -92,11 +90,8 @@ public class GridManager : MonoBehaviour
         }
         if (matchedGems.Count >= 3)
         {
-            foreach (GameObject gem in matchedGems)
-                {Destroy(gem);}
-            //TODO: Add Score
-            print(matchedGems.Count > 0);
-            return (matchedGems.Count > 0);
+            handleMatchedGems(matchedGems);
+            return true;
         }
         return false;
     }
@@ -133,8 +128,14 @@ public class GridManager : MonoBehaviour
         }
         return result;
     }
-    public void deleteGems()
+    public void handleMatchedGems(HashSet<GameObject> matchedGems)
     {
-        //TODO: Delete matched gems
+        foreach (GameObject gem in matchedGems)
+        {
+            Destroy(gem);
+            gameSession.AddToScore(100);
+        }
+            //TODO: Add Score
+            print(matchedGems.Count > 0);
     }
 }

@@ -5,6 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
+    GameSession gameSession;
+
+    private void Awake()
+    {
+        gameSession = FindObjectOfType<GameSession>();
+    }
     public void DisplayPauseMenu()
     {
         gameObject.transform.GetChild(0).gameObject.SetActive(true);
@@ -28,9 +34,11 @@ public class Menu : MonoBehaviour
 
     public void RestartLevel()
     {
+        gameSession.ResetGameSession();
+
         Scene scene = SceneManager.GetActiveScene();
-        //SceneManager.UnloadSceneAsync(scene);
         SceneManager.LoadScene(scene.name);
+        
         ResumeGame();
 
     }

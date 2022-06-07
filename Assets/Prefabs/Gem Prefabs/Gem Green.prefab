@@ -124,3 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6aac59623a824b3787bd01a0693dea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gemFallRate: 0.1
+  intPosition: {x: 0, y: 0}
+  isFalling: 1
+  posBelow: {fileID: 0}

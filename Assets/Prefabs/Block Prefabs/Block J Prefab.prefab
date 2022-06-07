@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af73577f56ae415180aa8ecb5d4d552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fallRate: 1
+  fallRate: 0.5
   fallDistance: 1
   heldInputDelay: 0.1
   fastFallRate: 0.05
