@@ -185,8 +185,8 @@ public class Block : MonoBehaviour
     }
 
     void rotateBlock()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
+    {   //* Rotate clockwise
+        if ((Input.GetKeyDown(KeyCode.Space)) || Input.GetKeyDown(KeyCode.E))
         {
             // Pre-rotate children in opposite direction
             foreach (Transform child in transform)
@@ -200,13 +200,68 @@ public class Block : MonoBehaviour
             if (isValidGridPos())
                 {updateGrid();}
             else
-                // If it's not valid, revert.
-                {
+                // If it's not valid, try 1 space Left | Right, and
+                {// revert if still not valid.
+                    // Modify position left 1
+                    transform.position += new Vector3(-1, 0, 0);
+                    // See if it's valid
+                    if (isValidGridPos())
+                        {updateGrid(); return;}
+                    else
+                        // If it's not valid, try Right 1
+                    {
+                        transform.position += new Vector3(2, 0, 0);
+                        if (isValidGridPos())
+                            {updateGrid(); return;}
+                        else // If still not valid, revert
+                            {transform.position += new Vector3(-1, 0, 0);}
+                    }
+
                     foreach (Transform child in transform)
                     {
                         child.transform.Rotate(0, 0, -90);
                     }
                     transform.Rotate(0, 0, 90);
+                }
+        }
+
+        //* Rotate counterclockwise
+        if ((Input.GetKeyDown(KeyCode.LeftShift)) || Input.GetKeyDown(KeyCode.Q))
+        {
+            // Pre-rotate children in opposite direction
+            foreach (Transform child in transform)
+            {
+                child.transform.Rotate(0, 0, -90);
+            }
+            // Rotate
+            transform.Rotate(0, 0, 90);
+
+            // See if valid
+            if (isValidGridPos())
+                {updateGrid();}
+            else
+                // If it's not valid, try 1 space Left | Right, and
+                {// revert if still not valid.
+                    // Modify position left 1
+                    transform.position += new Vector3(-1, 0, 0);
+                    // See if it's valid
+                    if (isValidGridPos())
+                        {updateGrid(); return;}
+                    else
+                        // If it's not valid, try Right 1
+                    {
+                        transform.position += new Vector3(2, 0, 0);
+                        if (isValidGridPos())
+                            {updateGrid(); return;}
+                        else // If still not valid, revert
+                            {transform.position += new Vector3(-1, 0, 0);}
+                    }
+
+                    foreach (Transform child in transform)
+                    {
+                        child.transform.Rotate(0, 0, 90);
+                    }
+                    transform.Rotate(0, 0, -90);
                 }
         }
     }

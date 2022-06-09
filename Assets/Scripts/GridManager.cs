@@ -37,12 +37,18 @@ public class GridManager : MonoBehaviour
 
         Transform tile2 = grid[tile2Position.x, tile2Position.y];
         SpriteRenderer renderer2 = tile2.GetComponent<SpriteRenderer>();
-
+        
         Sprite temp = renderer1.sprite;
         renderer1.sprite = renderer2.sprite;
         renderer2.sprite = temp;
+        if (checkForMatch() == false) //if no match is made, reset the Swap
+        {
+            temp = renderer1.sprite;
+            renderer1.sprite = renderer2.sprite;
+            renderer2.sprite = temp;
+        }
     }
-    GameObject GetGemAt(int column, int row)
+    Gem GetGemAt(int column, int row)
     {
         if (column < 0 || column >= gridWidth
             || row < 0 || row >= gridHeight)
@@ -54,7 +60,7 @@ public class GridManager : MonoBehaviour
         else 
         {
             Transform tile = grid[column, row];
-            GameObject gem = tile.gameObject;
+            Gem gem = intersecting.GetComponentInParent<Gem>();
             print(gem.GetComponent<SpriteRenderer>().sprite.name + " found at [" + column + "," + row + "]");
             return gem;
         }
@@ -62,17 +68,17 @@ public class GridManager : MonoBehaviour
 
     public bool checkForMatch()
     {
-        HashSet<GameObject> matchedGems = new HashSet<GameObject>();
+        HashSet<Gem> matchedGems = new HashSet<Gem>();
         for (int row = 0; row < gridHeight; row++)
         {
             for (int column = 0; column < gridWidth; column++)
             {
-                GameObject currentGem = GetGemAt(column, row);
-                if (currentGem == null)
+                Gem currentGem = GetGemAt(column, row);
+                if ((currentGem == null) || currentGem.isFalling)
                     {continue;}
                 
-                List<GameObject> horizontalMatches = FindColumnMatchForTile(column, row, currentGem);
-                List<GameObject> verticalMatches = FindRowMatchForTile(column, row, currentGem);
+                List<Gem> horizontalMatches = FindColumnMatchForTile(column, row, currentGem);
+                List<Gem> verticalMatches = FindRowMatchForTile(column, row, currentGem);
                 if ((horizontalMatches.Count >= 2))// || (verticalMatches.Count > 0))
                 {
                     matchedGems.Add(currentGem);
@@ -96,13 +102,13 @@ public class GridManager : MonoBehaviour
         return false;
     }
 
-    List<GameObject> FindColumnMatchForTile(int column, int row, GameObject currentGem)
+    List<Gem> FindColumnMatchForTile(int column, int row, Gem currentGem)
     {
-        List<GameObject> result = new List<GameObject>();
+        List<Gem> result = new List<Gem>();
         for (int i = column + 1; i < gridWidth; i++)
         {
-            GameObject nextGem = GetGemAt(i, row);
-            if (nextGem == null)
+            Gem nextGem = GetGemAt(i, row);
+            if ((nextGem == null) || nextGem.isFalling)
                 {break;}
             if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
                 {print("Test");break;}
@@ -112,13 +118,13 @@ public class GridManager : MonoBehaviour
         return result;
     }
 
-    List<GameObject> FindRowMatchForTile(int column, int row, GameObject currentGem)
+    List<Gem> FindRowMatchForTile(int column, int row, Gem currentGem)
     {
-        List<GameObject> result = new List<GameObject>();
+        List<Gem> result = new List<Gem>();
         for (int i = row + 1; i < gridHeight; i++)
         {
-            GameObject nextGem = GetGemAt(column, i);
-            if (nextGem == null)
+            Gem nextGem = GetGemAt(column, i);
+            if ((nextGem == null) || nextGem.isFalling)
                 {break;}
 
             if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
@@ -128,14 +134,12 @@ public class GridManager : MonoBehaviour
         }
         return result;
     }
-    public void handleMatchedGems(HashSet<GameObject> matchedGems)
+    public void handleMatchedGems(HashSet<Gem> matchedGems)
     {
-        foreach (GameObject gem in matchedGems)
+        foreach (Gem gem in matchedGems)
         {
-            Destroy(gem);
+            Destroy(gem.gameObject);
             gameSession.AddToScore(100);
         }
-            //TODO: Add Score
-            print(matchedGems.Count > 0);
     }
 }
