@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GameSession : MonoBehaviour
 {
-    int score = 0;
-    
+    private int score = 0;
+    public bool isPaused = false;
     private void Awake() 
     {
         SetupSingleton();    
@@ -28,6 +28,18 @@ public class GameSession : MonoBehaviour
     public void AddToScore(int scoreValue)
     {
         score += scoreValue;
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+        isPaused = true;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+        isPaused = false;
     }
 
     public void ResetGameSession()

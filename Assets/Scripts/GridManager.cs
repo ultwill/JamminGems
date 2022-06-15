@@ -7,7 +7,9 @@ public class GridManager : MonoBehaviour
     public static int gridWidth = 10;
     public static int gridHeight = 25;
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
-    GameSession gameSession;    
+    public bool swapAbilityActive = false;
+    public bool timeAbilityActive = false;
+    GameSession gameSession;
     
     void Awake()
     {
@@ -18,6 +20,48 @@ public class GridManager : MonoBehaviour
     void Update()
     {
         checkForMatch();
+        handleAbilityInputs();
+    }
+
+    private void handleAbilityInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && !swapAbilityActive)
+        {
+            swapAbilityActive = true;
+            SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+            swapIconRenderer.color = Color.grey;
+            StartCoroutine(swapAbilityCooldown());
+        }
+
+         if (Input.GetKeyDown(KeyCode.Q) && !timeAbilityActive)
+        {
+            timeAbilityActive = true;
+            GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
+            SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").gameObject.GetComponent<SpriteRenderer>();
+            timeIconRenderer.color = Color.grey;
+            StartCoroutine(timeAbilityCooldown());
+            gameSession.PauseGame();
+        }
+    }
+
+    private IEnumerator swapAbilityCooldown()
+    {
+        yield return new WaitForSecondsRealtime(5);
+        swapAbilityActive = false;
+        SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+        swapIconRenderer.color = Color.white;
+        print("Swap cooldown ended");
+    }
+
+    private IEnumerator timeAbilityCooldown()
+    {
+        yield return new WaitForSecondsRealtime(5);
+        timeAbilityActive = false;
+        gameSession.ResumeGame();
+        GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
+        SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").GetComponent<SpriteRenderer>();
+        timeIconRenderer.color = Color.white;
+        print("Timestop cooldown ended");
     }
 
     public static Vector2Int roundVec2(Vector2 v)
@@ -41,7 +85,7 @@ public class GridManager : MonoBehaviour
         Sprite temp = renderer1.sprite;
         renderer1.sprite = renderer2.sprite;
         renderer2.sprite = temp;
-        if (checkForMatch() == false) //if no match is made, reset the Swap
+        if ((!swapAbilityActive) && (checkForMatch() == false)) //if no match is made AND Swap Ability is inactive, reset the Swap
         {
             temp = renderer1.sprite;
             renderer1.sprite = renderer2.sprite;
@@ -61,7 +105,7 @@ public class GridManager : MonoBehaviour
         {
             Transform tile = grid[column, row];
             Gem gem = intersecting.GetComponentInParent<Gem>();
-            print(gem.GetComponent<SpriteRenderer>().sprite.name + " found at [" + column + "," + row + "]");
+            //print(gem.GetComponent<SpriteRenderer>().sprite.name + " found at [" + column + "," + row + "]");
             return gem;
         }
     }
@@ -111,7 +155,7 @@ public class GridManager : MonoBehaviour
             if ((nextGem == null) || nextGem.isFalling)
                 {break;}
             if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
-                {print("Test");break;}
+                {break;}
             if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
                 {result.Add(nextGem);print(result.Count + " Horizontal matches");}
         }

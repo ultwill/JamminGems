@@ -13,11 +13,13 @@ public class Block : MonoBehaviour
     private float lastFall = 0;
     private float currentFallRate;
     private GridManager gridManager;
+    private GameSession gameSession;
     
     // Start is called before the first frame update
     void Start()
     {
-        GridManager gridManager = FindObjectOfType<GridManager>();
+        gridManager = FindObjectOfType<GridManager>();
+        gameSession = FindObjectOfType<GameSession>();
         // Randomize each gem in the block
         foreach (Transform child in transform)
         {
@@ -47,6 +49,9 @@ public class Block : MonoBehaviour
 
     void moveBlock()
     {
+        if (gameSession.isPaused)
+            {return;}
+
         // Move Left
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -185,8 +190,11 @@ public class Block : MonoBehaviour
     }
 
     void rotateBlock()
-    {   //* Rotate clockwise
-        if ((Input.GetKeyDown(KeyCode.Space)) || Input.GetKeyDown(KeyCode.E))
+    {
+        if (gameSession.isPaused)
+            {return;}
+           //* Rotate clockwise
+        if ((Input.GetKeyDown(KeyCode.Space)))// || Input.GetKeyDown(KeyCode.E))
         {
             // Pre-rotate children in opposite direction
             foreach (Transform child in transform)
@@ -226,7 +234,7 @@ public class Block : MonoBehaviour
         }
 
         //* Rotate counterclockwise
-        if ((Input.GetKeyDown(KeyCode.LeftShift)) || Input.GetKeyDown(KeyCode.Q))
+        if ((Input.GetKeyDown(KeyCode.LeftShift)))// || Input.GetKeyDown(KeyCode.Q))
         {
             // Pre-rotate children in opposite direction
             foreach (Transform child in transform)

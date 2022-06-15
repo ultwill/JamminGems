@@ -24,12 +24,12 @@ public class Menu : MonoBehaviour
     }
     public void PauseGame()
     {
-        Time.timeScale = 0f;
+        gameSession.PauseGame();
     }
 
     public void ResumeGame()
     {
-        Time.timeScale = 1f;
+        gameSession.ResumeGame();
     }
 
     public void RestartLevel()

@@ -11,11 +11,14 @@ public class Gem : MonoBehaviour
     public Vector2Int intPosition;
     public bool isFalling = true;
     [SerializeField] private Transform posBelow;
+    GameSession gameSession;
 
     // Start is called before the first frame update
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        gameSession = FindObjectOfType<GameSession>();
+
     }
 
     // Update is called once per frame
@@ -69,11 +72,13 @@ public class Gem : MonoBehaviour
 
         if ((this.transform.parent == null) && !isObjectBeneath(_posBelow))
             {isFalling = true;}
-        else if ((this.transform.parent == null) && isObjectBeneath(_posBelow))
-            {isFalling = false;
-            transform.position = new Vector3 (intPosition.x, intPosition.y, transform.position.z);}
+        else if ((this.transform.parent == null) && isObjectBeneath(_posBelow)) // Snap to Grid
+        {
+            isFalling = false;
+            transform.position = new Vector3 (intPosition.x, intPosition.y, transform.position.z);
+        }
 
-        if ((this.transform.parent == null) && isFalling)
+        if ((this.transform.parent == null) && isFalling && !gameSession.isPaused)
         {
             transform.position += new Vector3(0, -gemFallRate, 0);
             updateGrid();
