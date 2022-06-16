@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
+    [SerializeField] Color activatedColor;
+    [SerializeField] Color cooldownColor;
     public static int gridWidth = 10;
     public static int gridHeight = 25;
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
-    public bool swapAbilityActive = false;
-    public bool timeAbilityActive = false;
-    GameSession gameSession;
+    private bool swapAbilityActive = false;
+    private bool swapAbilityOnCooldown = false;
+    private bool timeAbilityActive = false;
+    private bool timeAbilityOnCooldown = false;
+    [SerializeField] float swapDuration = 5f;
+    [SerializeField] float timestopDuration = 5f;
+    [SerializeField] float swapCooldown = 30f;
+    [SerializeField] float timestopCooldown = 30f;
+    private GameSession gameSession;
     
     void Awake()
     {
@@ -25,42 +33,63 @@ public class GridManager : MonoBehaviour
 
     private void handleAbilityInputs()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !swapAbilityActive)
+        if (Input.GetKeyDown(KeyCode.E) && !swapAbilityActive && !swapAbilityOnCooldown)
         {
             swapAbilityActive = true;
             SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
-            swapIconRenderer.color = Color.grey;
-            StartCoroutine(swapAbilityCooldown());
+            swapIconRenderer.color = activatedColor;
+            StartCoroutine(swapAbilityDuration());
         }
 
-         if (Input.GetKeyDown(KeyCode.Q) && !timeAbilityActive)
+         if (Input.GetKeyDown(KeyCode.Q) && !timeAbilityActive && !timeAbilityOnCooldown)
         {
             timeAbilityActive = true;
             GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
             SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").gameObject.GetComponent<SpriteRenderer>();
-            timeIconRenderer.color = Color.grey;
-            StartCoroutine(timeAbilityCooldown());
+            timeIconRenderer.color = activatedColor;
+            StartCoroutine(timeAbilityDuration());
             gameSession.PauseGame();
         }
     }
 
+    private IEnumerator swapAbilityDuration()
+    {
+        StartCoroutine(swapAbilityCooldown());
+        yield return new WaitForSecondsRealtime(swapDuration);
+        SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+        swapIconRenderer.color = cooldownColor;
+        swapAbilityActive = false;
+        swapAbilityOnCooldown = true;
+    }
+
     private IEnumerator swapAbilityCooldown()
     {
-        yield return new WaitForSecondsRealtime(5);
-        swapAbilityActive = false;
+        yield return new WaitForSecondsRealtime(swapCooldown);
         SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
         swapIconRenderer.color = Color.white;
+        swapAbilityOnCooldown = false;
         print("Swap cooldown ended");
+    }
+
+    private IEnumerator timeAbilityDuration()
+    {
+        StartCoroutine(timeAbilityCooldown());
+        yield return new WaitForSecondsRealtime(timestopDuration);
+        GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
+        SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").GetComponent<SpriteRenderer>();
+        timeIconRenderer.color = cooldownColor;
+        timeAbilityActive = false;
+        gameSession.ResumeGame();
+        timeAbilityOnCooldown = true;
     }
 
     private IEnumerator timeAbilityCooldown()
     {
-        yield return new WaitForSecondsRealtime(5);
-        timeAbilityActive = false;
-        gameSession.ResumeGame();
+        yield return new WaitForSecondsRealtime(timestopCooldown);
         GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
         SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").GetComponent<SpriteRenderer>();
         timeIconRenderer.color = Color.white;
+        timeAbilityOnCooldown = false;
         print("Timestop cooldown ended");
     }
 

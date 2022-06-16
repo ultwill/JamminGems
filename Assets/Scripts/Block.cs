@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    [SerializeField] private float fallRate = 1f; // seconds/line
+    private float fallRate = .2f; // seconds/line
     [SerializeField] private float fallDistance = 1f;
     [SerializeField] private float heldInputDelay = 0.1f;
     [SerializeField] private float fastFallRate = 0.05f;

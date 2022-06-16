@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameSession : MonoBehaviour
 {
+    public float fallRate = 0.25f; // seconds / line dropped
     private int score = 0;
     public bool isPaused = false;
     private void Awake() 
@@ -11,6 +12,11 @@ public class GameSession : MonoBehaviour
         SetupSingleton();    
     }
 
+    private void Update()
+    {
+        // Block currentBlock = FindObjectOfType<Block>();
+        // currentBlock.fallRate = fallRate;
+    }
     private void SetupSingleton()
     {
         int numberOfGameSessions = FindObjectsOfType<GameSession>().Length;
