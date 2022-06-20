@@ -15,8 +15,14 @@ public class Block : MonoBehaviour
     private GridManager gridManager;
     private GameSession gameSession;
     
+    private void Awake()
+    {
+        GameSession gameSession = FindObjectOfType<GameSession>();
+        fallRate = gameSession.fallRate;
+    }
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         gridManager = FindObjectOfType<GridManager>();
         gameSession = FindObjectOfType<GameSession>();
@@ -34,7 +40,7 @@ public class Block : MonoBehaviour
         if (!isValidGridPos())
         {
             Debug.Log("GAME OVER");
-            Destroy(gameObject);
+            StartCoroutine(gameOver());
         }
 
         currentFallRate = fallRate;
@@ -321,7 +327,21 @@ public class Block : MonoBehaviour
 
         this.transform.DetachChildren();
 
+        gridManager.checkForMatch();
         Destroy(this.gameObject);
+
+    }
+
+    private IEnumerator gameOver()
+    {
+        transform.position += new Vector3(0,1,0);
+        gameSession.PauseGame();
+        yield return new WaitForSecondsRealtime(1f);
+        gameSession.GameOver();
+        gameSession.ResumeGame();
+        print("before");
+        Menu.LoadGameOverScene();
+        print("after");
     }
 
     IEnumerator delayedLeftHold()

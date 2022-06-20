@@ -6,6 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: fa23182b141ec428fb213ea7749da704
+  - enabled: 1
+    path: Assets/Scenes/Options.unity
+    guid: c3b31dc7a8c4e47f3a1068cf891d3ee9
+  - enabled: 1
+    path: Assets/Scenes/DifficultySelect.unity
+    guid: 81abcb89926a8435da23cc85db1c7dce
+  - enabled: 1
     path: Assets/Scenes/TestLevel1.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: 304d6be19f3524a6894ec270e59b0645
   m_configObjects: {}

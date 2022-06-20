@@ -27,7 +27,7 @@ public class GridManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        checkForMatch();
+        //checkForMatch();
         handleAbilityInputs();
     }
 
@@ -68,7 +68,6 @@ public class GridManager : MonoBehaviour
         SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
         swapIconRenderer.color = Color.white;
         swapAbilityOnCooldown = false;
-        print("Swap cooldown ended");
     }
 
     private IEnumerator timeAbilityDuration()
@@ -90,7 +89,6 @@ public class GridManager : MonoBehaviour
         SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").GetComponent<SpriteRenderer>();
         timeIconRenderer.color = Color.white;
         timeAbilityOnCooldown = false;
-        print("Timestop cooldown ended");
     }
 
     public static Vector2Int roundVec2(Vector2 v)
@@ -186,7 +184,7 @@ public class GridManager : MonoBehaviour
             if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
                 {break;}
             if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
-                {result.Add(nextGem);print(result.Count + " Horizontal matches");}
+                {result.Add(nextGem);}
         }
         return result;
     }
@@ -203,7 +201,7 @@ public class GridManager : MonoBehaviour
             if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
                 {break;}
             if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
-                {result.Add(nextGem);print(result.Count + " Vertical matches");}
+                {result.Add(nextGem);}
         }
         return result;
     }
