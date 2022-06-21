@@ -15,11 +15,16 @@ public class Block : MonoBehaviour
     private GridManager gridManager;
     private GameSession gameSession;
     
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         gridManager = FindObjectOfType<GridManager>();
         gameSession = FindObjectOfType<GameSession>();
+        fallRate = gameSession.fallRate;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
         // Randomize each gem in the block
         foreach (Transform child in transform)
         {
@@ -33,8 +38,8 @@ public class Block : MonoBehaviour
         // Default position not valid? Then it's game over
         if (!isValidGridPos())
         {
-            Debug.Log("GAME OVER");
-            Destroy(gameObject);
+            print("GAME OVER");
+            StartCoroutine(gameOver());
         }
 
         currentFallRate = fallRate;
@@ -322,6 +327,18 @@ public class Block : MonoBehaviour
         this.transform.DetachChildren();
 
         Destroy(this.gameObject);
+    }
+
+    private IEnumerator gameOver()
+    {
+        transform.position += new Vector3(0,1,0);
+        gameSession.PauseGame();
+        yield return new WaitForSecondsRealtime(1f);
+        gameSession.GameOver();
+        gameSession.ResumeGame();
+        print("before");
+        Menu.LoadGameOverScene();
+        print("after");
     }
 
     IEnumerator delayedLeftHold()

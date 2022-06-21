@@ -186,7 +186,7 @@ public class GridManager : MonoBehaviour
             if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
                 {break;}
             if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
-                {result.Add(nextGem);print(result.Count + " Horizontal matches");}
+                {result.Add(nextGem);}
         }
         return result;
     }
@@ -203,7 +203,7 @@ public class GridManager : MonoBehaviour
             if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
                 {break;}
             if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
-                {result.Add(nextGem);print(result.Count + " Vertical matches");}
+                {result.Add(nextGem);}
         }
         return result;
     }
