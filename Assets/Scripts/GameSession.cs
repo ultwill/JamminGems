@@ -4,19 +4,37 @@ using UnityEngine;
 
 public class GameSession : MonoBehaviour
 {
-    public float fallRate = 0.25f; // seconds / line dropped
+    public float fallRate = 0.4f;
+    public float easyFallRate = 0.4f; // seconds / line dropped
+    public float normalFallRate = 0.2f; // seconds / line dropped
+    public float hardFallRate = 0.1f; // seconds / line dropped
+    public int difficulty = 0; // 0 = Easy, 1 = Normal, 2 = Hard
     private int score = 0;
+    private int hiscore = 0;
     public bool isPaused = false;
+
     private void Awake() 
     {
-        SetupSingleton();    
+        SetupSingleton();
+        if (difficulty == 0)
+            {fallRate = easyFallRate;}
+        else if (difficulty == 1)
+            {fallRate = normalFallRate;
+            print(difficulty);}
+        else if (difficulty == 2)
+            {fallRate = hardFallRate;}
     }
 
     private void Update()
     {
-        // Block currentBlock = FindObjectOfType<Block>();
-        // currentBlock.fallRate = fallRate;
+        if (difficulty == 0)
+            {fallRate = easyFallRate;}
+        if (difficulty == 1)
+            {fallRate = normalFallRate;}
+        if (difficulty == 2)
+            {fallRate = hardFallRate;}
     }
+
     private void SetupSingleton()
     {
         int numberOfGameSessions = FindObjectsOfType<GameSession>().Length;
@@ -30,6 +48,11 @@ public class GameSession : MonoBehaviour
     }
 
     public int GetScore() {return score;}
+    public int GetHiscore() {return hiscore;}
+    public void SetHisccore(int score)
+    {
+        hiscore = score;
+    }
 
     public void AddToScore(int scoreValue)
     {
@@ -50,6 +73,13 @@ public class GameSession : MonoBehaviour
 
     public void ResetGameSession()
     {
-        Destroy(gameObject);
+        score = 0;
+        ResumeGame();
+    }
+
+    public void GameOver()
+    {
+        if (score > hiscore)
+            {hiscore = score;}
     }
 }
