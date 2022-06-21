@@ -47,44 +47,4 @@ public class Menu : MonoBehaviour
     {
         Application.Quit();
     }
-
-    public void LoadDifficultyScene()
-    {
-        gameSession.ResetGameSession();
-        SceneManager.LoadScene("DifficultySelect");
-    }
-
-    public void LoadGameEasy()
-    {
-        gameSession.difficulty = 0;
-        SceneManager.LoadScene("TestLevel1");
-    }
-
-    public void LoadGameNormal()
-    {
-        gameSession.difficulty = 1;
-        SceneManager.LoadScene("TestLevel1");
-    }
-
-    public void LoadGameHard()
-    {
-        gameSession.difficulty = 2;
-        SceneManager.LoadScene("TestLevel1");
-    }
-    public void LoadOptionsScene()
-    {
-        SceneManager.LoadScene("Options");
-    }
-
-    public static void LoadGameOverScene()
-    {
-        SceneManager.LoadScene("GameOver");
-    }
-
-    public void LoadMainMenuScene()
-    {
-        gameSession.ResumeGame();
-        gameSession.ResetGameSession();
-        SceneManager.LoadScene("MainMenu");
-    }
 }

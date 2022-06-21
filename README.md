@@ -1,2 +1,4 @@
 # TetraGems
- A hectic matching game of falling gems.
+ A matching game about falling gems.
+
+GitHub desktop is so much easier; try it.

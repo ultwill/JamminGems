@@ -11,14 +11,12 @@ public class Gem : MonoBehaviour
     public Vector2Int intPosition;
     public bool isFalling = true;
     [SerializeField] private Transform posBelow;
-    GridManager gridManager;
     GameSession gameSession;
 
     // Start is called before the first frame update
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        gridManager = FindObjectOfType<GridManager>();
         gameSession = FindObjectOfType<GameSession>();
 
     }
@@ -78,8 +76,6 @@ public class Gem : MonoBehaviour
         {
             isFalling = false;
             transform.position = new Vector3 (intPosition.x, intPosition.y, transform.position.z);
-            //updateGrid();
-            gridManager.checkForMatch();
         }
 
         if ((this.transform.parent == null) && isFalling && !gameSession.isPaused)
