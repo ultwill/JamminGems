@@ -30,9 +30,9 @@ public class Block : MonoBehaviour
         {
             Spawner spawner = FindObjectOfType<Spawner>();
             int j = Random.Range(0, spawner.gems.Length);
-            Sprite newSprite = spawner.gems[j].gameObject.GetComponent<SpriteRenderer>().sprite;
+            Sprite newSprite = spawner.gems[j].gameObject.GetComponentInChildren<SpriteRenderer>().sprite;
             //print("Sprite is " + newSprite.name);
-            child.gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
+            child.gameObject.GetComponentInChildren<SpriteRenderer>().sprite = newSprite;
         }
 
         // Default position not valid? Then it's game over

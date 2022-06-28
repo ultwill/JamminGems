@@ -10,13 +10,14 @@ public class Gem : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public Vector2Int intPosition;
     public bool isFalling = true;
+    public bool isAnimating = false;
     [SerializeField] private Transform posBelow;
     GameSession gameSession;
 
     // Start is called before the first frame update
     void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         gameSession = FindObjectOfType<GameSession>();
 
     }
@@ -107,5 +108,10 @@ public class Gem : MonoBehaviour
     public static Vector2Int roundVec2(Vector2 v)
     {
         return new Vector2Int((int)Mathf.Round(v.x), (int)Mathf.Round(v.y));
+    }
+
+    void DeleteSelf()
+    {
+        Destroy(this.gameObject);
     }
 }

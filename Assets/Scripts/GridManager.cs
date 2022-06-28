@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class GridManager : MonoBehaviour
 {
@@ -13,7 +14,11 @@ public class GridManager : MonoBehaviour
     private bool swapAbilityOnCooldown = false;
     private bool timeAbilityActive = false;
     private bool timeAbilityOnCooldown = false;
-    [SerializeField] float swapDuration = 5f;
+    private float delayafterSwap = 0.01f; //Slight delay to allow animation to play
+    private float swapDelayReference;
+    private float delayafterMatch = 0.01f; //Slight delay to allow animation to play
+    private float matchDelayReference;
+    [SerializeField] float superswapDuration = 5f;
     [SerializeField] float timestopDuration = 5f;
     [SerializeField] float swapCooldown = 30f;
     [SerializeField] float timestopCooldown = 30f;
@@ -27,8 +32,12 @@ public class GridManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        checkForMatch();
+        //checkForMatch();
         handleAbilityInputs();
+    }
+    void LateUpdate()
+    {
+        checkForMatch();
     }
 
     private void handleAbilityInputs()
@@ -55,7 +64,7 @@ public class GridManager : MonoBehaviour
     private IEnumerator swapAbilityDuration()
     {
         StartCoroutine(swapAbilityCooldown());
-        yield return new WaitForSecondsRealtime(swapDuration);
+        yield return new WaitForSecondsRealtime(superswapDuration);
         SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
         swapIconRenderer.color = cooldownColor;
         swapAbilityActive = false;
@@ -103,22 +112,54 @@ public class GridManager : MonoBehaviour
         return ((int)pos.x >= 0 && (int)pos.x < gridWidth && (int)pos.y >= 0);
     }
 
-    public void SwapTiles(Vector2Int tile1Position, Vector2Int tile2Position)
+    public void SwapTiles(Vector2Int gem1Position, Vector2Int gem2Position)
     {
-        Transform tile1 = grid[tile1Position.x, tile1Position.y];
-        SpriteRenderer renderer1 = tile1.GetComponent<SpriteRenderer>();
+        swapDelayReference = Time.time;
+        Gem gem1 = GetGemAt(gem1Position.x, gem1Position.y);
+        SpriteRenderer renderer1 = gem1.GetComponentInChildren<SpriteRenderer>();
 
-        Transform tile2 = grid[tile2Position.x, tile2Position.y];
-        SpriteRenderer renderer2 = tile2.GetComponent<SpriteRenderer>();
+        Gem gem2 = GetGemAt(gem2Position.x, gem2Position.y);
+        SpriteRenderer renderer2 = gem2.GetComponentInChildren<SpriteRenderer>();
         
         Sprite temp = renderer1.sprite;
         renderer1.sprite = renderer2.sprite;
         renderer2.sprite = temp;
         if ((!swapAbilityActive) && (checkForMatch() == false)) //if no match is made AND Swap Ability is inactive, reset the Swap
         {
-            temp = renderer1.sprite;
-            renderer1.sprite = renderer2.sprite;
-            renderer2.sprite = temp;
+            renderer2.sprite = renderer1.sprite;
+            renderer1.sprite = temp;
+            return;
+        }
+        if (swapAbilityActive || checkForMatch())
+        {
+            if (gem1.transform.position - gem2.transform.position == Vector3.left)
+            {
+                Animator animator1 = gem1.GetComponent<Animator>();
+                animator1.Play("Swap Right");
+                Animator animator2 = gem2.GetComponent<Animator>();
+                animator2.Play("Swap Left");
+            }
+            else if (gem1.transform.position - gem2.transform.position == Vector3.right)
+            {
+                Animator animator1 = gem1.GetComponent<Animator>();
+                animator1.Play("Swap Left");
+                Animator animator2 = gem2.GetComponent<Animator>();
+                animator2.Play("Swap Right");
+            }
+            else if (gem1.transform.position - gem2.transform.position == Vector3.up)
+            {
+                Animator animator1 = gem1.GetComponent<Animator>();
+                animator1.Play("Swap Down");
+                Animator animator2 = gem2.GetComponent<Animator>();
+                animator2.Play("Swap Up");
+            }
+            else if (gem1.transform.position - gem2.transform.position == Vector3.down)
+            {
+                Animator animator1 = gem1.GetComponent<Animator>();
+                animator1.Play("Swap Up");
+                Animator animator2 = gem2.GetComponent<Animator>();
+                animator2.Play("Swap Down");
+            }
         }
     }
     Gem GetGemAt(int column, int row)
@@ -169,6 +210,7 @@ public class GridManager : MonoBehaviour
         }
         if (matchedGems.Count >= 3)
         {
+            matchDelayReference = Time.time;
             handleMatchedGems(matchedGems);
             return true;
         }
@@ -183,9 +225,9 @@ public class GridManager : MonoBehaviour
             Gem nextGem = GetGemAt(i, row);
             if ((nextGem == null) || nextGem.isFalling)
                 {break;}
-            if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
+            if (nextGem.GetComponentInChildren<SpriteRenderer>().sprite != currentGem.GetComponentInChildren<SpriteRenderer>().sprite)
                 {break;}
-            if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
+            if (nextGem.GetComponentInChildren<SpriteRenderer>().sprite == currentGem.GetComponentInChildren<SpriteRenderer>().sprite)
                 {result.Add(nextGem);}
         }
         return result;
@@ -200,19 +242,35 @@ public class GridManager : MonoBehaviour
             if ((nextGem == null) || nextGem.isFalling)
                 {break;}
 
-            if (nextGem.GetComponent<SpriteRenderer>().sprite != currentGem.GetComponent<SpriteRenderer>().sprite)
+            if (nextGem.GetComponentInChildren<SpriteRenderer>().sprite != currentGem.GetComponentInChildren<SpriteRenderer>().sprite)
                 {break;}
-            if (nextGem.GetComponent<SpriteRenderer>().sprite == currentGem.GetComponent<SpriteRenderer>().sprite)
+            if (nextGem.GetComponentInChildren<SpriteRenderer>().sprite == currentGem.GetComponentInChildren<SpriteRenderer>().sprite)
                 {result.Add(nextGem);}
         }
         return result;
     }
     public void handleMatchedGems(HashSet<Gem> matchedGems)
     {
+        int numSwapping = 0;
         foreach (Gem gem in matchedGems)
         {
-            Destroy(gem.gameObject);
-            gameSession.AddToScore(100);
+            if (gem.isAnimating)
+                numSwapping++;
+        }
+        if ((Time.time - swapDelayReference < delayafterSwap) || (numSwapping > 0))
+            {return;}
+
+        foreach (Gem gem in matchedGems)
+        {
+            if (!gem.isAnimating)
+            {
+                gem.GetComponent<Animator>().Play("Match");
+                // if (Time.time - matchDelayReference > delayafterMatch)
+                // {
+                //     Destroy(gem.gameObject);
+                //     gameSession.AddToScore(100);
+                // }
+            }
         }
     }
 }
