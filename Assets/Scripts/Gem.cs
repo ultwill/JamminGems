@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Gem : MonoBehaviour
 {
-    [SerializeField] private float gemFallRate = 0.05f; // Units / frame
-    private static Gem selectedGem;
-    private static Gem gem2;
+    [SerializeField] private float gemFallRate = 0.05f; //measured in Units/frame
+    private static Gem selectedGem; // static so their is only one at a time
+    private static Gem gem2; // ^^
     private SpriteRenderer spriteRenderer;
     public Vector2Int intPosition;
     public bool isFalling = true;
     public bool isAnimating = false;
-    [SerializeField] private Transform posBelow;
+    [SerializeField] private Transform posBelow; // The position where we check if something is directly below
     GameSession gameSession;
 
     // Start is called before the first frame update
@@ -30,6 +30,7 @@ public class Gem : MonoBehaviour
     }
     public void Select()
     {
+        SoundManager.Instance.PlaySound(0); // Play Select sound
         spriteRenderer.color = Color.grey;
     }
 
@@ -40,16 +41,15 @@ public class Gem : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(selectedGem != null)
+        if(selectedGem != null) // if a gem is already selected
         {
-            if (selectedGem == this)
+            if (selectedGem == this) // if the selected gem is already this one
                 {return;}
 
             selectedGem.Unselect();
             gem2 = this;
-            //print(Vector2Int.Distance(selectedGem.intPosition, gem2.intPosition));
             if (Vector2Int.Distance(selectedGem.intPosition, gem2.intPosition) == 1)
-            {
+            { // if the selected gems are adjacent
                 GridManager gridManager = FindObjectOfType<GridManager>();
                 gridManager.SwapTiles(gem2.intPosition, selectedGem.intPosition);
                 selectedGem = null;
@@ -71,16 +71,16 @@ public class Gem : MonoBehaviour
     {
         Vector3 _posBelow = posBelow.position;
 
-        if ((this.transform.parent == null) && !isObjectBeneath(_posBelow))
+        if ((this.transform.parent == null) && !isObjectBeneath(_posBelow)) // if gem is not part of a block, and nothing's below
             {isFalling = true;}
-        else if ((this.transform.parent == null) && isObjectBeneath(_posBelow)) // Snap to Grid
+        else if ((this.transform.parent == null) && isObjectBeneath(_posBelow))
         {
-            isFalling = false;
+            isFalling = false; // stop falling and snap to grid
             transform.position = new Vector3 (intPosition.x, intPosition.y, transform.position.z);
         }
 
         if ((this.transform.parent == null) && isFalling && !gameSession.isPaused)
-        {
+        { // if it can fall, then fall according to gemFallrate
             transform.position += new Vector3(0, -gemFallRate, 0);
             updateGrid();
         }
@@ -94,14 +94,14 @@ public class Gem : MonoBehaviour
 
     void updateGrid()
     {
-        // Remove old children from grid
+        // Remove transform from old section of the grid
         for (int y = 0; y < GridManager.gridHeight; y++)
             for (int x = 0; x < GridManager.gridWidth; x++)
                 if (GridManager.grid[x, y] != null)
                     if (GridManager.grid[x, y] == transform)
                         GridManager.grid[x, y] = null;
 
-        // Add new children to grid
+        // Add transform to updated section of the grid
             GridManager.grid[intPosition.x, intPosition.y] = this.transform;  
     }
 
@@ -110,7 +110,7 @@ public class Gem : MonoBehaviour
         return new Vector2Int((int)Mathf.Round(v.x), (int)Mathf.Round(v.y));
     }
 
-    void DeleteSelf()
+    void DeleteSelf() //* This is called at the end of the Match animation
     {
         Destroy(this.gameObject);
     }

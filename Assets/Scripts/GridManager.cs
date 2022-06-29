@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations;
 
 public class GridManager : MonoBehaviour
 {
-    [SerializeField] Color activatedColor;
-    [SerializeField] Color cooldownColor;
+    [SerializeField] Color activatedColor; // The color to change ability icons to when they're active
+    [SerializeField] Color cooldownColor; // The color to change ability icons to when they're on cooldown
     public static int gridWidth = 10;
     public static int gridHeight = 25;
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
@@ -15,12 +14,10 @@ public class GridManager : MonoBehaviour
     private bool timeAbilityActive = false;
     private bool timeAbilityOnCooldown = false;
     private float delayafterSwap = 0.01f; //Slight delay to allow animation to play
-    private float swapDelayReference;
-    private float delayafterMatch = 0.01f; //Slight delay to allow animation to play
-    private float matchDelayReference;
+    private float swapDelayReference; // A reference point to see when a swap is possible
     [SerializeField] float superswapDuration = 5f;
     [SerializeField] float timestopDuration = 5f;
-    [SerializeField] float swapCooldown = 30f;
+    [SerializeField] float superswapCooldown = 30f;
     [SerializeField] float timestopCooldown = 30f;
     private GameSession gameSession;
     
@@ -37,7 +34,7 @@ public class GridManager : MonoBehaviour
     }
     void LateUpdate()
     {
-        checkForMatch();
+        checkForMatch(); // In LateUpdate so it doesn't interfere with animations
     }
 
     private void handleAbilityInputs()
@@ -51,13 +48,12 @@ public class GridManager : MonoBehaviour
         }
 
          if (Input.GetKeyDown(KeyCode.Q) && !timeAbilityActive && !timeAbilityOnCooldown)
-        {
+        {//! Time icon is currently hacked together and may need to change
             timeAbilityActive = true;
             GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
             SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").gameObject.GetComponent<SpriteRenderer>();
             timeIconRenderer.color = activatedColor;
             StartCoroutine(timeAbilityDuration());
-            gameSession.PauseGame();
         }
     }
 
@@ -73,7 +69,7 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator swapAbilityCooldown()
     {
-        yield return new WaitForSecondsRealtime(swapCooldown);
+        yield return new WaitForSecondsRealtime(superswapCooldown);
         SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
         swapIconRenderer.color = Color.white;
         swapAbilityOnCooldown = false;
@@ -82,6 +78,7 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator timeAbilityDuration()
     {
+        gameSession.PauseGame();
         StartCoroutine(timeAbilityCooldown());
         yield return new WaitForSecondsRealtime(timestopDuration);
         GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
@@ -114,14 +111,14 @@ public class GridManager : MonoBehaviour
 
     public void SwapTiles(Vector2Int gem1Position, Vector2Int gem2Position)
     {
-        swapDelayReference = Time.time;
+        swapDelayReference = Time.time; // Set reference point
         Gem gem1 = GetGemAt(gem1Position.x, gem1Position.y);
         SpriteRenderer renderer1 = gem1.GetComponentInChildren<SpriteRenderer>();
 
         Gem gem2 = GetGemAt(gem2Position.x, gem2Position.y);
         SpriteRenderer renderer2 = gem2.GetComponentInChildren<SpriteRenderer>();
         
-        Sprite temp = renderer1.sprite;
+        Sprite temp = renderer1.sprite; // Swap sprites
         renderer1.sprite = renderer2.sprite;
         renderer2.sprite = temp;
         if ((!swapAbilityActive) && (checkForMatch() == false)) //if no match is made AND Swap Ability is inactive, reset the Swap
@@ -130,7 +127,7 @@ public class GridManager : MonoBehaviour
             renderer1.sprite = temp;
             return;
         }
-        if (swapAbilityActive || checkForMatch())
+        if (swapAbilityActive || checkForMatch()) // if the Swap is OK, animate it according to their  relative positions
         {
             if (gem1.transform.position - gem2.transform.position == Vector3.left)
             {
@@ -138,6 +135,7 @@ public class GridManager : MonoBehaviour
                 animator1.Play("Swap Right");
                 Animator animator2 = gem2.GetComponent<Animator>();
                 animator2.Play("Swap Left");
+                SoundManager.Instance.PlaySound(1); // Play Swap sound
             }
             else if (gem1.transform.position - gem2.transform.position == Vector3.right)
             {
@@ -145,6 +143,7 @@ public class GridManager : MonoBehaviour
                 animator1.Play("Swap Left");
                 Animator animator2 = gem2.GetComponent<Animator>();
                 animator2.Play("Swap Right");
+                SoundManager.Instance.PlaySound(1); // Play Swap sound
             }
             else if (gem1.transform.position - gem2.transform.position == Vector3.up)
             {
@@ -152,6 +151,7 @@ public class GridManager : MonoBehaviour
                 animator1.Play("Swap Down");
                 Animator animator2 = gem2.GetComponent<Animator>();
                 animator2.Play("Swap Up");
+                SoundManager.Instance.PlaySound(1); // Play Swap sound
             }
             else if (gem1.transform.position - gem2.transform.position == Vector3.down)
             {
@@ -159,23 +159,23 @@ public class GridManager : MonoBehaviour
                 animator1.Play("Swap Up");
                 Animator animator2 = gem2.GetComponent<Animator>();
                 animator2.Play("Swap Down");
+                SoundManager.Instance.PlaySound(1); // Play Swap sound
             }
         }
     }
     Gem GetGemAt(int column, int row)
     {
-        if (column < 0 || column >= gridWidth
+        if (column < 0 || column >= gridWidth // if outside grid, return null
             || row < 0 || row >= gridHeight)
             {return null;}
 
-        Collider2D intersecting = Physics2D.OverlapCircle(new Vector2 (column, row), 0.1f);// Physics.OverlapSphere(new Vector3(column, row, 0), 0.1f);
+        Collider2D intersecting = Physics2D.OverlapCircle(new Vector2 (column, row), 0.1f);
+        // Check if there is something there
         if (intersecting == null)
             {return null;}
         else 
         {
-            Transform tile = grid[column, row];
             Gem gem = intersecting.GetComponentInParent<Gem>();
-            //print(gem.GetComponent<SpriteRenderer>().sprite.name + " found at [" + column + "," + row + "]");
             return gem;
         }
     }
@@ -183,38 +183,37 @@ public class GridManager : MonoBehaviour
     public bool checkForMatch()
     {
         HashSet<Gem> matchedGems = new HashSet<Gem>();
-        for (int row = 0; row < gridHeight; row++)
+        for (int row = 0; row < gridHeight; row++) // Check from left to right, bottom to top
         {
             for (int column = 0; column < gridWidth; column++)
             {
                 Gem currentGem = GetGemAt(column, row);
                 if ((currentGem == null) || currentGem.isFalling)
-                    {continue;}
+                    {continue;} // Check the next one
                 
                 List<Gem> horizontalMatches = FindColumnMatchForTile(column, row, currentGem);
                 List<Gem> verticalMatches = FindRowMatchForTile(column, row, currentGem);
-                if ((horizontalMatches.Count >= 2))// || (verticalMatches.Count > 0))
+                if ((horizontalMatches.Count >= 2)) // if 2+ matching gems are in the same row
                 {
                     matchedGems.Add(currentGem);
                     matchedGems.UnionWith(horizontalMatches);
-                    //matchedGems.UnionWith(verticalMatches);
                 }
 
                  
-                if (verticalMatches.Count >= 2)
+                if (verticalMatches.Count >= 2) // if 2+ matching gems are in the same column
                 {
-                    matchedGems.UnionWith(verticalMatches);
                     matchedGems.Add(currentGem);
+                    matchedGems.UnionWith(verticalMatches);
                 }
             }
         }
-        if (matchedGems.Count >= 3)
+        if (matchedGems.Count >= 3) //* This batches all the mmatches throughout the grid this frame
         {
-            matchDelayReference = Time.time;
             handleMatchedGems(matchedGems);
             return true;
         }
-        return false;
+        else
+            {return false;}
     }
 
     List<Gem> FindColumnMatchForTile(int column, int row, Gem currentGem)
@@ -251,25 +250,22 @@ public class GridManager : MonoBehaviour
     }
     public void handleMatchedGems(HashSet<Gem> matchedGems)
     {
-        int numSwapping = 0;
+        int numAnimating = 0;
         foreach (Gem gem in matchedGems)
         {
             if (gem.isAnimating)
-                numSwapping++;
+                numAnimating++;
         }
-        if ((Time.time - swapDelayReference < delayafterSwap) || (numSwapping > 0))
+        if ((numAnimating > 0) || ((Time.time - swapDelayReference) < delayafterSwap))
             {return;}
 
         foreach (Gem gem in matchedGems)
         {
             if (!gem.isAnimating)
             {
-                gem.GetComponent<Animator>().Play("Match");
-                // if (Time.time - matchDelayReference > delayafterMatch)
-                // {
-                //     Destroy(gem.gameObject);
-                //     gameSession.AddToScore(100);
-                // }
+                gem.GetComponent<Animator>().Play("Match"); //!This animation ends with destroying the matched gem
+                SoundManager.Instance.PlaySound(2);     //* Clip 2 is the match sound
+                gameSession.AddToScore(100);
             }
         }
     }

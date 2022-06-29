@@ -47,7 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af73577f56ae415180aa8ecb5d4d552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fallRate: 0.5
   fallDistance: 1
   heldInputDelay: 0.1
   fastFallRate: 0.05
@@ -60,6 +59,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2515587466440498703}
     m_Modifications:
+    - target: {fileID: 940760300519198119, guid: cd01024d6e77e4746946fa5782bd943f,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e276d36139256476aa51413bfa62495c,
+        type: 3}
     - target: {fileID: 3943179115464002272, guid: cd01024d6e77e4746946fa5782bd943f,
         type: 3}
       propertyPath: m_RootOrder
@@ -135,6 +140,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2515587466440498703}
     m_Modifications:
+    - target: {fileID: 940760300519198119, guid: cd01024d6e77e4746946fa5782bd943f,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a42a28bb0f5b6422ab5b074405bc47f1,
+        type: 3}
     - target: {fileID: 3943179115464002272, guid: cd01024d6e77e4746946fa5782bd943f,
         type: 3}
       propertyPath: m_RootOrder
@@ -210,6 +221,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2515587466440498703}
     m_Modifications:
+    - target: {fileID: 940760300519198119, guid: cd01024d6e77e4746946fa5782bd943f,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e276d36139256476aa51413bfa62495c,
+        type: 3}
     - target: {fileID: 3943179115464002272, guid: cd01024d6e77e4746946fa5782bd943f,
         type: 3}
       propertyPath: m_RootOrder

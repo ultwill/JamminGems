@@ -5,11 +5,12 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     private float fallRate = .2f; // seconds/line
-    [SerializeField] private float fallDistance = 1f;
-    [SerializeField] private float heldInputDelay = 0.1f;
+    [SerializeField] private float fallDistance = 1f; // the distance the block falls each step
+    [SerializeField] private float heldInputDelay = 0.1f; //! held input not yet implemented
     [SerializeField] private float fastFallRate = 0.05f;
     [SerializeField] private float instantDropFallRate = 0.0001f;
     public bool isFalling = true;
+    private bool instantDropping = false; //* Plyer cannot move or rotate after initiating Instant Drop (W/Up arrow)
     private float lastFall = 0;
     private float currentFallRate;
     private GridManager gridManager;
@@ -19,22 +20,12 @@ public class Block : MonoBehaviour
     {
         gridManager = FindObjectOfType<GridManager>();
         gameSession = FindObjectOfType<GameSession>();
-        fallRate = gameSession.fallRate;
+        fallRate = gameSession.fallRate; // sync fallRate with the fall rate set by Game Session
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // Randomize each gem in the block
-        foreach (Transform child in transform)
-        {
-            Spawner spawner = FindObjectOfType<Spawner>();
-            int j = Random.Range(0, spawner.gems.Length);
-            Sprite newSprite = spawner.gems[j].gameObject.GetComponentInChildren<SpriteRenderer>().sprite;
-            //print("Sprite is " + newSprite.name);
-            child.gameObject.GetComponentInChildren<SpriteRenderer>().sprite = newSprite;
-        }
-
         // Default position not valid? Then it's game over
         if (!isValidGridPos())
         {
@@ -58,7 +49,7 @@ public class Block : MonoBehaviour
             {return;}
 
         // Move Left
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !instantDropping)
         {
             // Modify position
             transform.position += new Vector3(-1, 0, 0);
@@ -71,7 +62,7 @@ public class Block : MonoBehaviour
                 {transform.position += new Vector3(1, 0, 0);}
         }
         // Move Right
-        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !instantDropping)
         {
             // Modify position
             transform.position += new Vector3(1, 0, 0);
@@ -84,8 +75,7 @@ public class Block : MonoBehaviour
                 {transform.position += new Vector3(-1, 0, 0);}
         }
         // Move Downwards and Fast Fall
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-            //|| Time.time - lastFall >= currentFallRate)
+        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && !instantDropping)
         {
             // float counter = 0;
             // while ((Input.GetKey(KeyCode.DownArrow)) & (counter <= heldInputDelay))
@@ -112,8 +102,6 @@ public class Block : MonoBehaviour
                 // If it's not valid, revert.
                 transform.position += new Vector3(0, fallDistance, 0);
 
-                //gridManager.checkForMatch();
-
                 // Spawn next Group
                 FindObjectOfType<Spawner>().spawnNext();
 
@@ -124,20 +112,15 @@ public class Block : MonoBehaviour
             }
 
             lastFall = Time.time;
-
-            
-            
-            print("Later fall speed of " + currentFallRate);
         }
         else if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
-                {currentFallRate = fallRate;
-                print("Key up fall speed of " + currentFallRate);}
+                {currentFallRate = fallRate;}
 
         // Instant Drop
         else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             currentFallRate = instantDropFallRate;
-
+            instantDropping = true;
             // Modify position
             transform.position += new Vector3(0, -fallDistance, 0);
 
@@ -149,8 +132,6 @@ public class Block : MonoBehaviour
                 // If it's not valid, revert.
                 transform.position += new Vector3(0, fallDistance, 0);
 
-                //gridManager.checkForMatch();
-
                 // Spawn next Group
                 FindObjectOfType<Spawner>().spawnNext();
 
@@ -161,9 +142,6 @@ public class Block : MonoBehaviour
             }
 
             lastFall = Time.time;
-
-            // if (Input.GetKeyUp(KeyCode.UpArrow))
-            //     {currentFallRate = fallRate;}
         }
         // Fall according to currentFallRate
         else if (Time.time - lastFall >= currentFallRate)
@@ -196,8 +174,9 @@ public class Block : MonoBehaviour
 
     void rotateBlock()
     {
-        if (gameSession.isPaused)
+        if (gameSession.isPaused || instantDropping)
             {return;}
+
            //* Rotate clockwise
         if ((Input.GetKeyDown(KeyCode.Space)))// || Input.GetKeyDown(KeyCode.E))
         {
@@ -230,7 +209,7 @@ public class Block : MonoBehaviour
                             {transform.position += new Vector3(-1, 0, 0);}
                     }
 
-                    foreach (Transform child in transform)
+                    foreach (Transform child in transform) //Revert
                     {
                         child.transform.Rotate(0, 0, -90);
                     }
@@ -270,7 +249,7 @@ public class Block : MonoBehaviour
                             {transform.position += new Vector3(-1, 0, 0);}
                     }
 
-                    foreach (Transform child in transform)
+                    foreach (Transform child in transform) //Revert
                     {
                         child.transform.Rotate(0, 0, 90);
                     }
@@ -331,25 +310,23 @@ public class Block : MonoBehaviour
 
     private IEnumerator gameOver()
     {
-        transform.position += new Vector3(0,1,0);
+        transform.position += new Vector3(0,1,0); // move out of the way
         gameSession.PauseGame();
         yield return new WaitForSecondsRealtime(1f);
         gameSession.GameOver();
         gameSession.ResumeGame();
-        print("before");
         Menu.LoadGameOverScene();
-        print("after");
     }
 
-    IEnumerator delayedLeftHold()
+    IEnumerator delayedLeftHold() //! Unimplemented
     {
         yield return new WaitForSeconds(heldInputDelay);
     }
-    IEnumerator delayedRightHold()
+    IEnumerator delayedRightHold() //! Unimplemented
     {
         yield return new WaitForSeconds(heldInputDelay);
     }
-    IEnumerator delayedDownHold()
+    IEnumerator delayedDownHold() //! Unimplemented
     {
         yield return new WaitForSeconds(heldInputDelay);
     }

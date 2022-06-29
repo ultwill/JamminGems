@@ -15,28 +15,21 @@ public class Spawner : MonoBehaviour
         spawnNext();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void spawnNext()
     {
-        // Random Index
+        // Random block layout from array
         int i = Random.Range(0, blocks.Length);
         GameObject newBlock = blocks[i];
-        // Spawn Group at Spawner's current Position
+
+        // Randomize each gem sprite in block
+        foreach (Transform child in newBlock.transform)
+        {
+            int j = Random.Range(0, gems.Length);
+            Sprite newSprite = gems[j].gameObject.GetComponentInChildren<SpriteRenderer>().sprite;
+            child.gameObject.GetComponentInChildren<SpriteRenderer>().sprite = newSprite;
+        }
+
+        // Spawn new block at Spawner's current Position
         Instantiate(newBlock, transform.position, Quaternion.identity);
-
-        // foreach (Transform child in newBlock.transform)
-        // {
-        //     int j = Random.Range(0, gems.Length);
-        //     Sprite newSprite = gems[j].gameObject.GetComponent<SpriteRenderer>().sprite;
-        //     print("Sprite is " + newSprite.name);
-        //     child.gameObject.GetComponent<SpriteRenderer>().sprite = newSprite;
-        // }
-
-        
     }
 }
