@@ -19,10 +19,10 @@ public class DifficultyText : MonoBehaviour
     void Update()
     {
         if (gameSession.difficulty == 0)
-            {difficultyText.text = "Easy";}
-        if (gameSession.difficulty == 1)
+            {difficultyText.text = "Chill";}
+        else if (gameSession.difficulty == 1)
             {difficultyText.text = "Normal";}
-        if (gameSession.difficulty == 2)
+        else if (gameSession.difficulty == 2)
             {difficultyText.text = "Hard";}
     }
 }

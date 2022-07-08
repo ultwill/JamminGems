@@ -18,8 +18,23 @@ public class Hiscore : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gameSession.GetScore() >= gameSession.GetHiscore())
-            {gameSession.SetHisccore(gameSession.GetScore());}
-        hiscoreText.text = gameSession.GetHiscore().ToString();
+        if (gameSession.difficulty == 0) // Easy
+        {
+            if (gameSession.GetScore() >= gameSession.GetEasyHiscore())
+                {gameSession.SaveEasyHiscore();}
+            hiscoreText.text = gameSession.GetEasyHiscore().ToString();
+        }
+        if (gameSession.difficulty == 1) // Normal
+        {
+            if (gameSession.GetScore() >= gameSession.GetNormalHiscore())
+                {gameSession.SaveNormalHiscore();}
+            hiscoreText.text = gameSession.GetNormalHiscore().ToString();
+        }
+        if (gameSession.difficulty == 2) // Hard
+        {
+            if (gameSession.GetScore() >= gameSession.GetHardHiscore())
+                {gameSession.SaveHardHiscore();}
+            hiscoreText.text = gameSession.GetHardHiscore().ToString();
+        }
     }
 }

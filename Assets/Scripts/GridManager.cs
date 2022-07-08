@@ -15,15 +15,51 @@ public class GridManager : MonoBehaviour
     private bool timeAbilityOnCooldown = false;
     private float delayafterSwap = 0.01f; //Slight delay to allow animation to play
     private float swapDelayReference; // A reference point to see when a swap is possible
-    [SerializeField] float superswapDuration = 5f;
-    [SerializeField] float timestopDuration = 5f;
-    [SerializeField] float superswapCooldown = 30f;
-    [SerializeField] float timestopCooldown = 30f;
+    private float superswapDuration = 12f;
+    private float superswapCooldown = 42f;
+    [SerializeField] float swapEasyDuration = 12f;
+    [SerializeField] float swapNormalDuration = 9f;
+    [SerializeField] float swapHardDuration = 5f;
+    [SerializeField] float swapEasyCooldown = 42f;
+    [SerializeField] float swapNormalCooldown = 54f;
+    [SerializeField] float swapHardCooldown = 65f;
+    private float timestopDuration = 12f;
+    private float timestopCooldown = 42f;
+    [SerializeField] float timeEasyDuration = 12f;
+    [SerializeField] float timeNormalDuration = 9f;
+    [SerializeField] float timeHardDuration = 5f;
+    [SerializeField] float timeEasyCooldown = 42f;
+    [SerializeField] float timeNormalCooldown = 54f;
+    [SerializeField] float timeHardCooldown = 65f;
     private GameSession gameSession;
     
     void Awake()
     {
         gameSession = FindObjectOfType<GameSession>();
+        if (gameSession.difficulty == 0)
+        {
+            superswapDuration = swapEasyDuration;
+            superswapCooldown = swapEasyCooldown;
+
+            timestopDuration = timeEasyDuration;
+            timestopCooldown = timeEasyCooldown;
+        }
+        else if (gameSession.difficulty == 1)
+        {
+            superswapDuration = swapNormalDuration;
+            superswapCooldown = swapNormalCooldown;
+
+            timestopDuration = timeNormalDuration;
+            timestopCooldown = timeNormalCooldown;
+        }
+        else if (gameSession.difficulty == 2)
+        {
+            superswapDuration = swapHardDuration;
+            superswapCooldown = swapHardCooldown;
+
+            timestopDuration = timeHardDuration;
+            timestopCooldown = timeHardCooldown;
+        }
     }
 
     // Update is called once per frame
@@ -264,9 +300,40 @@ public class GridManager : MonoBehaviour
             if (!gem.isAnimating)
             {
                 gem.GetComponent<Animator>().Play("Match"); //!This animation ends with destroying the matched gem
-                SoundManager.Instance.PlaySound(2);     //* Clip 2 is the match sound
-                gameSession.AddToScore(100);
             }
+        }
+        SoundManager.Instance.PlaySound(2); //* Clip 2 is the match sound
+        if (matchedGems.Count == 3)
+        {
+            gameSession.AddToScore(3);
+        }
+        else if (matchedGems.Count == 4)
+        {
+            gameSession.AddToScore(20);
+        }
+        else if (matchedGems.Count == 5)
+        {
+            gameSession.AddToScore(50);
+        }
+        else if (matchedGems.Count == 6)
+        {
+            gameSession.AddToScore(300);
+        }
+        else if (matchedGems.Count == 7)
+        {
+            gameSession.AddToScore(1400);
+        }
+        else if (matchedGems.Count == 8)
+        {
+            gameSession.AddToScore(8000);
+        }
+        else if (matchedGems.Count == 9)
+        {
+            gameSession.AddToScore(90000);
+        }
+        else if (matchedGems.Count >= 10)
+        {
+            gameSession.AddToScore(100000 * matchedGems.Count);
         }
     }
 }

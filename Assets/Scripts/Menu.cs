@@ -87,4 +87,9 @@ public class Menu : MonoBehaviour
         gameSession.ResetGameSession();
         SceneManager.LoadScene("MainMenu");
     }
+
+    public void LoadCreditsScene()
+    {
+        SceneManager.LoadScene("Credits");
+    }
 }
