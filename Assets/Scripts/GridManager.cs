@@ -9,9 +9,9 @@ public class GridManager : MonoBehaviour
     public static int gridWidth = 10;
     public static int gridHeight = 25;
     public static Transform[,] grid = new Transform[gridWidth, gridHeight];
-    private bool swapAbilityActive = false;
+    public bool swapAbilityActive = false;
     private bool swapAbilityOnCooldown = false;
-    private bool timeAbilityActive = false;
+    public bool timeAbilityActive = false;
     private bool timeAbilityOnCooldown = false;
     private float delayafterSwap = 0.01f; //Slight delay to allow animation to play
     private float swapDelayReference; // A reference point to see when a swap is possible
@@ -295,13 +295,6 @@ public class GridManager : MonoBehaviour
         if ((numAnimating > 0) || ((Time.time - swapDelayReference) < delayafterSwap))
             {return;}
 
-        foreach (Gem gem in matchedGems)
-        {
-            if (!gem.isAnimating)
-            {
-                gem.GetComponent<Animator>().Play("Match"); //!This animation ends with destroying the matched gem
-            }
-        }
         SoundManager.Instance.PlaySound(2); //* Clip 2 is the match sound
         if (matchedGems.Count == 3)
         {
@@ -334,6 +327,14 @@ public class GridManager : MonoBehaviour
         else if (matchedGems.Count >= 10)
         {
             gameSession.AddToScore(100000 * matchedGems.Count);
+        }
+
+        foreach (Gem gem in matchedGems)
+        {
+            if (!gem.isAnimating)
+            {
+                gem.GetComponent<Animator>().Play("Match"); //!This animation ends with destroying the matched gem
+            }
         }
     }
 }

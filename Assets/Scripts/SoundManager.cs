@@ -12,6 +12,19 @@ public class SoundManager : MonoBehaviour
     {
         Instance = this;
         Source = GetComponent<AudioSource>();
+        SetupSingleton();
+    }
+
+    private void SetupSingleton()
+    {
+        int numberOfGameSessions = FindObjectsOfType<GameSession>().Length;
+        if (numberOfGameSessions > 1)
+        {
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+        }
+        else
+            DontDestroyOnLoad(gameObject);
     }
 
     public void PlaySound(int clip)

@@ -13,12 +13,14 @@ public class Gem : MonoBehaviour
     public bool isAnimating = false;
     [SerializeField] private Transform posBelow; // The position where we check if something is directly below
     GameSession gameSession;
+    GridManager gridManager;
 
     // Start is called before the first frame update
     void Start()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         gameSession = FindObjectOfType<GameSession>();
+        gridManager = FindObjectOfType<GridManager>();
 
     }
 
@@ -41,6 +43,9 @@ public class Gem : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (gameSession.isPaused && !gridManager.timeAbilityActive)
+            {return;}
+
         if(selectedGem != null) // if a gem is already selected
         {
             if (selectedGem == this) // if the selected gem is already this one

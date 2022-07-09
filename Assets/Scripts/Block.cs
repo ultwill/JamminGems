@@ -313,9 +313,10 @@ public class Block : MonoBehaviour
         transform.position += new Vector3(0,1,0); // move out of the way
         gameSession.PauseGame();
         yield return new WaitForSecondsRealtime(1f);
-        gameSession.GameOver();
         gameSession.ResumeGame();
-        Menu.LoadGameOverScene();
+        gameSession.GameOver();
+        //gameSession.ResumeGame();
+        //Menu.LoadGameOverScene();
     }
 
     IEnumerator delayedLeftHold() //! Unimplemented

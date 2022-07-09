@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Credits.unity
     guid: 29271d7b9307b42a1906db28bfc3cfe9
   - enabled: 1
+    path: Assets/Scenes/Credits2.unity
+    guid: b721d768112664dec8c2a0aedbd00e33
+  - enabled: 1
     path: Assets/Scenes/DifficultySelect.unity
     guid: 81abcb89926a8435da23cc85db1c7dce
   - enabled: 1

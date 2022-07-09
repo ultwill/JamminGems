@@ -11,6 +11,9 @@ public class Menu : MonoBehaviour
     {
         gameSession = FindObjectOfType<GameSession>();
     }
+
+    public void PlayUISelectSound()
+    {SoundManager.Instance.PlaySound(0);}
     public void DisplayPauseMenu()
     {
         gameObject.transform.GetChild(0).gameObject.SetActive(true);
@@ -76,9 +79,9 @@ public class Menu : MonoBehaviour
         SceneManager.LoadScene("Options");
     }
 
-    public static void LoadGameOverScene()
+    public void LoadGameOverScene()
     {
-        SceneManager.LoadScene("GameOver");
+        gameSession.GameOver();
     }
 
     public void LoadMainMenuScene()
@@ -91,5 +94,9 @@ public class Menu : MonoBehaviour
     public void LoadCreditsScene()
     {
         SceneManager.LoadScene("Credits");
+    }
+    public void LoadCredits2Scene()
+    {
+        SceneManager.LoadScene("Credits2");
     }
 }
