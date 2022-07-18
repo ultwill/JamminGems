@@ -32,6 +32,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] float timeNormalCooldown = 54f;
     [SerializeField] float timeHardCooldown = 65f;
     private GameSession gameSession;
+    [SerializeField] GameObject dropIndicator;
     
     void Awake()
     {
@@ -67,6 +68,7 @@ public class GridManager : MonoBehaviour
     {
         //checkForMatch();
         handleAbilityInputs();
+        moveDropIndicator();
     }
     void LateUpdate()
     {
@@ -336,5 +338,9 @@ public class GridManager : MonoBehaviour
                 gem.GetComponent<Animator>().Play("Match"); //!This animation ends with destroying the matched gem
             }
         }
+    }
+    private void moveDropIndicator()
+    {
+        dropIndicator.transform.position = FindObjectOfType<Block>().transform.position;
     }
 }
