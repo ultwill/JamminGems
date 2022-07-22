@@ -301,34 +301,43 @@ public class GridManager : MonoBehaviour
         if (matchedGems.Count == 3)
         {
             gameSession.AddToScore(3);
+            MatchPopup.Instance.scorePopup(3, 3);
         }
         else if (matchedGems.Count == 4)
         {
             gameSession.AddToScore(20);
+            MatchPopup.Instance.scorePopup(4, 20);
         }
         else if (matchedGems.Count == 5)
         {
             gameSession.AddToScore(50);
+            MatchPopup.Instance.scorePopup(5, 50);
         }
         else if (matchedGems.Count == 6)
         {
             gameSession.AddToScore(300);
+            MatchPopup.Instance.scorePopup(6, 300);
         }
         else if (matchedGems.Count == 7)
         {
             gameSession.AddToScore(1400);
+            MatchPopup.Instance.scorePopup(7, 1400);
         }
         else if (matchedGems.Count == 8)
         {
             gameSession.AddToScore(8000);
+            MatchPopup.Instance.scorePopup(8, 8000);
         }
         else if (matchedGems.Count == 9)
         {
             gameSession.AddToScore(90000);
+            MatchPopup.Instance.scorePopup(9, 90000);
         }
         else if (matchedGems.Count >= 10)
         {
-            gameSession.AddToScore(100000 * matchedGems.Count);
+            int score = 100000 * matchedGems.Count;
+            gameSession.AddToScore(score);
+            MatchPopup.Instance.scorePopup(10, score);
         }
 
         foreach (Gem gem in matchedGems)
