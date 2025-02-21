@@ -127,6 +127,7 @@ MonoBehaviour:
   gemFallRate: 0.05
   intPosition: {x: 0, y: 0}
   isFalling: 1
+  isAnimating: 0
   posBelow: {fileID: 0}
 --- !u!1 &2350563492969392883
 GameObject:
@@ -255,6 +256,7 @@ MonoBehaviour:
   gemFallRate: 0.05
   intPosition: {x: 0, y: 0}
   isFalling: 1
+  isAnimating: 0
   posBelow: {fileID: 0}
 --- !u!1 &3879903750917909807
 GameObject:
@@ -383,6 +385,7 @@ MonoBehaviour:
   gemFallRate: 0.05
   intPosition: {x: 0, y: 0}
   isFalling: 1
+  isAnimating: 0
   posBelow: {fileID: 0}
 --- !u!1 &6021422765820378351
 GameObject:
@@ -432,11 +435,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af73577f56ae415180aa8ecb5d4d552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fallRate: 0.5
   fallDistance: 1
   heldInputDelay: 0.1
   fastFallRate: 0.05
-  instantDropFallRate: 0.0001
+  instantDropFallRate: 0.001
   isFalling: 1
 --- !u!1 &7107521197481256787
 GameObject:
@@ -565,4 +567,5 @@ MonoBehaviour:
   gemFallRate: 0.05
   intPosition: {x: 0, y: 0}
   isFalling: 1
+  isAnimating: 0
   posBelow: {fileID: 0}

@@ -86,7 +86,7 @@ public class Gem : MonoBehaviour
 
         if ((this.transform.parent == null) && isFalling && !gameSession.isPaused)
         { // if it can fall, then fall according to gemFallrate
-            transform.position += new Vector3(0, -gemFallRate, 0);
+            transform.position += new Vector3(0, -gemFallRate * Time.deltaTime, 0);
             updateGrid();
         }
     }
@@ -100,14 +100,14 @@ public class Gem : MonoBehaviour
     void updateGrid()
     {
         // Remove transform from old section of the grid
-        for (int y = 0; y < GridManager.gridHeight; y++)
-            for (int x = 0; x < GridManager.gridWidth; x++)
-                if (GridManager.grid[x, y] != null)
-                    if (GridManager.grid[x, y] == transform)
-                        GridManager.grid[x, y] = null;
+        for (int y = 0; y < gridManager.gridHeight; y++)
+            for (int x = 0; x < gridManager.gridWidth; x++)
+                if (gridManager.grid[x, y] != null)
+                    if (gridManager.grid[x, y] == transform)
+                        gridManager.grid[x, y] = null;
 
         // Add transform to updated section of the grid
-            GridManager.grid[intPosition.x, intPosition.y] = this.transform;  
+            gridManager.grid[intPosition.x, intPosition.y] = this.transform;  
     }
 
     public static Vector2Int roundVec2(Vector2 v)

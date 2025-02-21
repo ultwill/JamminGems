@@ -6,9 +6,9 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] Color activatedColor; // The color to change ability icons to when they're active
     [SerializeField] Color cooldownColor; // The color to change ability icons to when they're on cooldown
-    public static int gridWidth = 10;
-    public static int gridHeight = 25;
-    public static Transform[,] grid = new Transform[gridWidth, gridHeight];
+    [SerializeField] public int gridWidth = 10;
+    [SerializeField] public int gridHeight = 25;
+    public Transform[,] grid;
     public bool swapAbilityActive = false;
     private bool swapAbilityOnCooldown = false;
     public bool timeAbilityActive = false;
@@ -61,6 +61,8 @@ public class GridManager : MonoBehaviour
             timestopDuration = timeHardDuration;
             timestopCooldown = timeHardCooldown;
         }
+
+        grid = new Transform[gridWidth, gridHeight];
     }
 
     // Update is called once per frame
@@ -142,9 +144,9 @@ public class GridManager : MonoBehaviour
         return new Vector2Int((int)Mathf.Round(v.x), (int)Mathf.Round(v.y));
     }
 
-    public static bool isInsideBorder(Vector2 pos)
+    public bool isInsideBorder(Vector2 pos)
     {
-        return ((int)pos.x >= 0 && (int)pos.x < gridWidth && (int)pos.y >= 0);
+        return (int)pos.x >= 0 && ((int)pos.x < gridWidth) && (int)pos.y >= 0;
     }
 
     public void SwapTiles(Vector2Int gem1Position, Vector2Int gem2Position)
@@ -231,7 +233,7 @@ public class GridManager : MonoBehaviour
                 
                 List<Gem> horizontalMatches = FindColumnMatchForTile(column, row, currentGem);
                 List<Gem> verticalMatches = FindRowMatchForTile(column, row, currentGem);
-                if ((horizontalMatches.Count >= 2)) // if 2+ matching gems are in the same row
+                if (horizontalMatches.Count >= 2) // if 2+ matching gems are in the same row
                 {
                     matchedGems.Add(currentGem);
                     matchedGems.UnionWith(horizontalMatches);

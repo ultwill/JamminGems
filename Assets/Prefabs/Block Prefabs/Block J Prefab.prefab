@@ -50,7 +50,7 @@ MonoBehaviour:
   fallDistance: 1
   heldInputDelay: 0.1
   fastFallRate: 0.05
-  instantDropFallRate: 0.0001
+  instantDropFallRate: 0.01
   isFalling: 1
 --- !u!1001 &4081654325237321119
 PrefabInstance:
@@ -63,7 +63,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: a42a99ef9bd3b43159502d28c2f88d04,
+      objectReference: {fileID: 21300000, guid: e061a6efb591941a2afc88ea8d62f04d,
         type: 3}
     - target: {fileID: 3943179115464002272, guid: cd01024d6e77e4746946fa5782bd943f,
         type: 3}
@@ -144,7 +144,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 77f235af0525b43bd9e5c765444ce40e,
+      objectReference: {fileID: 21300000, guid: 118f7c4b36e6f4a69a8e4702d27f47c4,
         type: 3}
     - target: {fileID: 3943179115464002272, guid: cd01024d6e77e4746946fa5782bd943f,
         type: 3}
@@ -225,7 +225,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: e276d36139256476aa51413bfa62495c,
+      objectReference: {fileID: 21300000, guid: d4eeb29bea2f34b179c167e8190a159a,
         type: 3}
     - target: {fileID: 3943179115464002272, guid: cd01024d6e77e4746946fa5782bd943f,
         type: 3}

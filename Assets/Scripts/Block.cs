@@ -8,7 +8,7 @@ public class Block : MonoBehaviour
     [SerializeField] private float fallDistance = 1f; // the distance the block falls each step
     [SerializeField] private float heldInputDelay = 0.1f; //! held input not yet implemented
     [SerializeField] private float fastFallRate = 0.05f;
-    [SerializeField] private float instantDropFallRate = 0.0001f;
+    [SerializeField] private float instantDropFallRate = 0.01f;
     public bool isFalling = true;
     private bool instantDropping = false; //* Plyer cannot move or rotate after initiating Instant Drop (W/Up arrow)
     private float lastFall = 0;
@@ -117,7 +117,7 @@ public class Block : MonoBehaviour
                 {currentFallRate = fallRate;}
 
         // Instant Drop
-        else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) && !instantDropping)
         {
             currentFallRate = instantDropFallRate;
             instantDropping = true;
@@ -265,12 +265,12 @@ public class Block : MonoBehaviour
             Vector2 v = GridManager.roundVec2(child.position);
 
             // Not inside Border?
-            if (!GridManager.isInsideBorder(v))
+            if (!gridManager.isInsideBorder(v))
                 {return false;}
 
             // Block in grid cell (and not part of same group)?
-            if (GridManager.grid[(int)v.x, (int)v.y] != null &&
-                GridManager.grid[(int)v.x, (int)v.y].parent != transform)
+            if (gridManager.grid[(int)v.x, (int)v.y] != null &&
+                gridManager.grid[(int)v.x, (int)v.y].parent != transform)
                 {return false;}
         }
 
@@ -280,17 +280,17 @@ public class Block : MonoBehaviour
     void updateGrid()
     {
         // Remove old children from grid
-        for (int y = 0; y < GridManager.gridHeight; y++)
-            for (int x = 0; x < GridManager.gridWidth; x++)
-                if (GridManager.grid[x, y] != null)
-                    if (GridManager.grid[x, y].parent == transform)
-                        GridManager.grid[x, y] = null;
+        for (int y = 0; y < gridManager.gridHeight; y++)
+            for (int x = 0; x < gridManager.gridWidth; x++)
+                if (gridManager.grid[x, y] != null)
+                    if (gridManager.grid[x, y].parent == transform)
+                        gridManager.grid[x, y] = null;
 
         // Add new children to grid
         foreach (Transform child in transform)
         {
             Vector2 v = GridManager.roundVec2(child.position);
-            GridManager.grid[(int)v.x, (int)v.y] = child;
+            gridManager.grid[(int)v.x, (int)v.y] = child;
         }        
     }
     private void placeBlock()

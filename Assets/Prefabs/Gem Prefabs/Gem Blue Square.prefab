@@ -74,14 +74,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6aac59623a824b3787bd01a0693dea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gemFallRate: 0.1
+  gemFallRate: 10
   intPosition: {x: 0, y: 0}
   isFalling: 1
-  isSwapping: 0
+  isAnimating: 0
   posBelow: {fileID: 553616960931207817}
 --- !u!95 &168583063042438593
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -98,7 +98,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5564128686763734691
 GameObject:
   m_ObjectHideFlags: 0
