@@ -1,4 +1,2 @@
-# TetraGems
- A matching game about falling gems.
-
-GitHub desktop is so much easier; try it.
+# Drop 'n Swap
+ A new matching game about falling gems.
