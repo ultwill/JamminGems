@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Block 2
+  - Block L
+  - Block J
+  - Block I
   layers:
   - Default
   - TransparentFX

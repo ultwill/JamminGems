@@ -15,24 +15,24 @@ public class GridManager : MonoBehaviour
     private bool timeAbilityOnCooldown = false;
     private float delayafterSwap = 0.01f; //Slight delay to allow animation to play
     private float swapDelayReference; // A reference point to see when a swap is possible
-    private float superswapDuration = 12f;
-    private float superswapCooldown = 42f;
-    [SerializeField] float swapEasyDuration = 12f;
-    [SerializeField] float swapNormalDuration = 9f;
-    [SerializeField] float swapHardDuration = 5f;
-    [SerializeField] float swapEasyCooldown = 42f;
-    [SerializeField] float swapNormalCooldown = 54f;
-    [SerializeField] float swapHardCooldown = 65f;
+    private float superswapDuration = 15f;
+    private float superswapCooldown = 30f;
+    [SerializeField] float swapEasyDuration = 15f;
+    [SerializeField] float swapNormalDuration = 12f;
+    [SerializeField] float swapHardDuration = 9f;
+    [SerializeField] float swapEasyCooldown = 30f;
+    [SerializeField] float swapNormalCooldown = 45f;
+    [SerializeField] float swapHardCooldown = 60f;
     private float timestopDuration = 12f;
     private float timestopCooldown = 42f;
-    [SerializeField] float timeEasyDuration = 12f;
-    [SerializeField] float timeNormalDuration = 9f;
-    [SerializeField] float timeHardDuration = 5f;
-    [SerializeField] float timeEasyCooldown = 42f;
-    [SerializeField] float timeNormalCooldown = 54f;
-    [SerializeField] float timeHardCooldown = 65f;
+    private float timeEasyDuration = 12f;
+    private float timeNormalDuration = 9f;
+    private float timeHardDuration = 5f;
+    private float timeEasyCooldown = 42f;
+    private float timeNormalCooldown = 54f;
+    private float timeHardCooldown = 65f;
     private GameSession gameSession;
-    [SerializeField] GameObject dropIndicator;
+    //[SerializeField] GameObject dropIndicator;
     
     void Awake()
     {
@@ -70,7 +70,7 @@ public class GridManager : MonoBehaviour
     {
         //checkForMatch();
         handleAbilityInputs();
-        moveDropIndicator();
+        //moveDropIndicator();
     }
     void LateUpdate()
     {
@@ -82,28 +82,43 @@ public class GridManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && !swapAbilityActive && !swapAbilityOnCooldown)
         {
             swapAbilityActive = true;
+            timeAbilityActive = true;
             SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
             swapIconRenderer.color = activatedColor;
-            StartCoroutine(swapAbilityDuration());
+            StartCoroutine("swapAbilityDuration");
+        }
+        else if (Input.GetKeyDown(KeyCode.E) && swapAbilityActive) // Press E Key again while ability is active to cancel early
+        {
+            StopCoroutine("swapAbilityDuration");
+            SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+            swapIconRenderer.color = cooldownColor;
+            swapAbilityActive = false;
+            timeAbilityActive = false;
+            gameSession.ResumeGame();
+            StartCoroutine("swapAbilityCooldown");
+            swapAbilityOnCooldown = true;
         }
 
-         if (Input.GetKeyDown(KeyCode.Q) && !timeAbilityActive && !timeAbilityOnCooldown)
-        {//! Time icon is currently hacked together and may need to change
-            timeAbilityActive = true;
-            GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
-            SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").gameObject.GetComponent<SpriteRenderer>();
-            timeIconRenderer.color = activatedColor;
-            StartCoroutine(timeAbilityDuration());
-        }
+        //  if (Input.GetKeyDown(KeyCode.Q) && !timeAbilityActive && !timeAbilityOnCooldown)
+        // {//! Time icon is currently hacked together and may need to change
+        //     timeAbilityActive = true;
+        //     GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
+        //     SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").gameObject.GetComponent<SpriteRenderer>();
+        //     timeIconRenderer.color = activatedColor;
+        //     StartCoroutine(timeAbilityDuration());
+        // }
     }
 
     private IEnumerator swapAbilityDuration()
     {
-        StartCoroutine(swapAbilityCooldown());
+        gameSession.PauseGame();
         yield return new WaitForSecondsRealtime(superswapDuration);
         SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
         swapIconRenderer.color = cooldownColor;
         swapAbilityActive = false;
+        timeAbilityActive = false;
+        gameSession.ResumeGame();
+        StartCoroutine("swapAbilityCooldown");
         swapAbilityOnCooldown = true;
     }
 
@@ -116,28 +131,29 @@ public class GridManager : MonoBehaviour
         print("Swap cooldown ended");
     }
 
-    private IEnumerator timeAbilityDuration()
-    {
-        gameSession.PauseGame();
-        StartCoroutine(timeAbilityCooldown());
-        yield return new WaitForSecondsRealtime(timestopDuration);
-        GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
-        SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").GetComponent<SpriteRenderer>();
-        timeIconRenderer.color = cooldownColor;
-        timeAbilityActive = false;
-        gameSession.ResumeGame();
-        timeAbilityOnCooldown = true;
-    }
+    // private IEnumerator timeAbilityDuration()
+    // {
+    //     gameSession.PauseGame();
+        
+    //     yield return new WaitForSecondsRealtime(timestopDuration);
+    //     GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
+    //     SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").GetComponent<SpriteRenderer>();
+    //     timeIconRenderer.color = cooldownColor;
+    //     timeAbilityActive = false;
+    //     gameSession.ResumeGame();
+    //     StartCoroutine(timeAbilityCooldown());
+    //     timeAbilityOnCooldown = true;
+    // }
 
-    private IEnumerator timeAbilityCooldown()
-    {
-        yield return new WaitForSecondsRealtime(timestopCooldown);
-        GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
-        SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").GetComponent<SpriteRenderer>();
-        timeIconRenderer.color = Color.white;
-        timeAbilityOnCooldown = false;
-        print("Timestop cooldown ended");
-    }
+    // private IEnumerator timeAbilityCooldown()
+    // {
+    //     yield return new WaitForSecondsRealtime(timestopCooldown);
+    //     GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
+    //     SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").GetComponent<SpriteRenderer>();
+    //     timeIconRenderer.color = Color.white;
+    //     timeAbilityOnCooldown = false;
+    //     print("Timestop cooldown ended");
+    // }
 
     public static Vector2Int roundVec2(Vector2 v)
     {
@@ -307,8 +323,8 @@ public class GridManager : MonoBehaviour
         }
         else if (matchedGems.Count == 4)
         {
-            gameSession.AddToScore(20);
-            MatchPopup.Instance.scorePopup(4, 20);
+            gameSession.AddToScore(15);
+            MatchPopup.Instance.scorePopup(4, 15);
         }
         else if (matchedGems.Count == 5)
         {
@@ -317,29 +333,29 @@ public class GridManager : MonoBehaviour
         }
         else if (matchedGems.Count == 6)
         {
-            gameSession.AddToScore(300);
-            MatchPopup.Instance.scorePopup(6, 300);
+            gameSession.AddToScore(250);
+            MatchPopup.Instance.scorePopup(6, 250);
         }
         else if (matchedGems.Count == 7)
         {
-            gameSession.AddToScore(1400);
-            MatchPopup.Instance.scorePopup(7, 1400);
+            gameSession.AddToScore(1500);
+            MatchPopup.Instance.scorePopup(7, 1500);
         }
         else if (matchedGems.Count == 8)
         {
-            gameSession.AddToScore(8000);
-            MatchPopup.Instance.scorePopup(8, 8000);
+            gameSession.AddToScore(10000);
+            MatchPopup.Instance.scorePopup(8, 10000);
         }
         else if (matchedGems.Count == 9)
         {
-            gameSession.AddToScore(90000);
-            MatchPopup.Instance.scorePopup(9, 90000);
+            gameSession.AddToScore(50000);
+            MatchPopup.Instance.scorePopup(9, 50000);
         }
         else if (matchedGems.Count >= 10)
         {
-            int score = 100000 * matchedGems.Count;
+            int score = 10000 * matchedGems.Count;
             gameSession.AddToScore(score);
-            MatchPopup.Instance.scorePopup(10, score);
+            MatchPopup.Instance.scorePopup(matchedGems.Count, score);
         }
 
         foreach (Gem gem in matchedGems)
@@ -350,8 +366,8 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-    private void moveDropIndicator()
-    {
-        dropIndicator.transform.position = FindObjectOfType<Block>().transform.position;
-    }
+    // private void moveDropIndicator()
+    // {
+    //     dropIndicator.transform.position = FindObjectOfType<Block>().transform.position;
+    // }
 }

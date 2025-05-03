@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    private float fallRate = .2f; // seconds/line
+    private float fallRate = .3f; // seconds/line
     [SerializeField] private float fallDistance = 1f; // the distance the block falls each step
-    [SerializeField] private float heldInputDelay = 0.1f; //! held input not yet implemented
+    public float horizontalHoldDelay = 0.25f; // Delay before continuous movement starts
+    public float horizontalRepeatRate = 0.166667f; // Time between each move during continuous movement
+
+    private float leftHoldTimer = 0f;
+    private float rightHoldTimer = 0f;
+    private float leftMoveTimer = 0f;
+    private float rightMoveTimer = 0f;
     [SerializeField] private float fastFallRate = 0.05f;
     [SerializeField] private float instantDropFallRate = 0.01f;
     public bool isFalling = true;
@@ -56,13 +62,48 @@ public class Block : MonoBehaviour
 
             // See if it's valid
             if (isValidGridPos())
-                {updateGrid();}
+            {
+                updateGrid();
+                leftHoldTimer = 0f;
+                leftMoveTimer = 0f;
+            }
             else
                 // If it's not valid, revert.
                 {transform.position += new Vector3(1, 0, 0);}
         }
+        // Hold Left
+        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && !instantDropping)
+        {
+            leftHoldTimer += Time.deltaTime;
+            print(leftHoldTimer);
+
+            if (leftHoldTimer >= horizontalHoldDelay)
+            {
+                leftMoveTimer += Time.deltaTime;
+                
+                if (leftMoveTimer >= horizontalRepeatRate)
+                {
+                    // Modify position
+                transform.position += new Vector3(-1, 0, 0);
+                    // See if it's valid
+                if (isValidGridPos())
+                {
+                    updateGrid();
+                    leftMoveTimer = 0f;
+                }
+                else
+                    // If it's not valid, revert.
+                    {transform.position += new Vector3(1, 0, 0);}
+                    }
+                }
+        }
+        else
+        {
+            leftHoldTimer = 0f;
+            leftMoveTimer = 0f;
+        }
         // Move Right
-        else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !instantDropping)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !instantDropping)
         {
             // Modify position
             transform.position += new Vector3(1, 0, 0);
@@ -74,8 +115,39 @@ public class Block : MonoBehaviour
                 // If it's not valid, revert.
                 {transform.position += new Vector3(-1, 0, 0);}
         }
+        // Hold Right
+        if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && !instantDropping)
+        {
+            rightHoldTimer += Time.deltaTime;
+            //print(rightHoldTimer);
+
+            if (rightHoldTimer >= horizontalHoldDelay)
+            {
+                rightMoveTimer += Time.deltaTime;
+                
+                if (rightMoveTimer >= horizontalRepeatRate)
+                {
+                    // Modify position
+                transform.position += new Vector3(1, 0, 0);
+                    // See if it's valid
+                if (isValidGridPos())
+                {
+                    updateGrid();
+                    rightMoveTimer = 0f;
+                }
+                else
+                    // If it's not valid, revert.
+                    {transform.position += new Vector3(-1, 0, 0);}
+                    }
+                }
+        }
+        else
+        {
+            rightHoldTimer = 0f;
+            rightMoveTimer = 0f;
+        }
         // Move Downwards and Fast Fall
-        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && !instantDropping)
+        if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && !instantDropping)
         {
             // float counter = 0;
             // while ((Input.GetKey(KeyCode.DownArrow)) & (counter <= heldInputDelay))
@@ -103,7 +175,7 @@ public class Block : MonoBehaviour
                 transform.position += new Vector3(0, fallDistance, 0);
 
                 // Spawn next Group
-                FindObjectOfType<Spawner>().spawnNext();
+                FindObjectOfType<Spawner>().spawnBlock();
 
                 placeBlock();
 
@@ -113,11 +185,11 @@ public class Block : MonoBehaviour
 
             lastFall = Time.time;
         }
-        else if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
+        if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
                 {currentFallRate = fallRate;}
 
         // Instant Drop
-        else if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) && !instantDropping)
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) && !instantDropping)
         {
             currentFallRate = instantDropFallRate;
             instantDropping = true;
@@ -133,7 +205,7 @@ public class Block : MonoBehaviour
                 transform.position += new Vector3(0, fallDistance, 0);
 
                 // Spawn next Group
-                FindObjectOfType<Spawner>().spawnNext();
+                FindObjectOfType<Spawner>().spawnBlock();
 
                 placeBlock();
 
@@ -160,7 +232,7 @@ public class Block : MonoBehaviour
                 //GridManager.checkForMatch();
 
                 // Spawn next Group
-                FindObjectOfType<Spawner>().spawnNext();
+                FindObjectOfType<Spawner>().spawnBlock();
 
                 placeBlock();
 
@@ -317,18 +389,5 @@ public class Block : MonoBehaviour
         gameSession.GameOver();
         //gameSession.ResumeGame();
         //Menu.LoadGameOverScene();
-    }
-
-    IEnumerator delayedLeftHold() //! Unimplemented
-    {
-        yield return new WaitForSeconds(heldInputDelay);
-    }
-    IEnumerator delayedRightHold() //! Unimplemented
-    {
-        yield return new WaitForSeconds(heldInputDelay);
-    }
-    IEnumerator delayedDownHold() //! Unimplemented
-    {
-        yield return new WaitForSeconds(heldInputDelay);
     }
 }

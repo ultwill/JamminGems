@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4535819852144303697}
   m_Layer: 0
   m_Name: Block L Prefab
-  m_TagString: Untagged
+  m_TagString: Block L
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,7 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallDistance: 1
-  heldInputDelay: 0.1
+  horizontalHoldDelay: 0.1
+  horizontalRepeatRate: 0.1
   fastFallRate: 0.05
   instantDropFallRate: 0.01
   isFalling: 1
@@ -144,7 +145,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: e061a6efb591941a2afc88ea8d62f04d,
+      objectReference: {fileID: 21300000, guid: d4eeb29bea2f34b179c167e8190a159a,
         type: 3}
     - target: {fileID: 3943179115464002272, guid: cd01024d6e77e4746946fa5782bd943f,
         type: 3}
@@ -225,7 +226,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 0f27377ebe7f14668ab26b0a8caad231,
+      objectReference: {fileID: 21300000, guid: d4eeb29bea2f34b179c167e8190a159a,
         type: 3}
     - target: {fileID: 3943179115464002272, guid: cd01024d6e77e4746946fa5782bd943f,
         type: 3}
