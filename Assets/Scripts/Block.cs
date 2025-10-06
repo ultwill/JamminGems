@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    private float fallRate = .3f; // seconds/line
+    public float fallRate = 1f; // seconds/line
     [SerializeField] private float fallDistance = 1f; // the distance the block falls each step
     public float horizontalHoldDelay = 0.25f; // Delay before continuous movement starts
-    public float horizontalRepeatRate = 0.166667f; // Time between each move during continuous movement
+    public float horizontalRepeatRate = 0.1667f; // Time between each move during continuous movement
 
     private float leftHoldTimer = 0f;
     private float rightHoldTimer = 0f;
@@ -21,12 +21,13 @@ public class Block : MonoBehaviour
     private float currentFallRate;
     private GridManager gridManager;
     private GameSession gameSession;
-    
+
     private void Awake()
     {
         gridManager = FindObjectOfType<GridManager>();
         gameSession = FindObjectOfType<GameSession>();
         fallRate = gameSession.fallRate; // sync fallRate with the fall rate set by Game Session
+        currentFallRate = fallRate;
     }
 
     // Start is called before the first frame update
@@ -45,6 +46,7 @@ public class Block : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        fallRate = gameSession.fallRate; // sync fallRate with the fall rate set by Game Session
         moveBlock();
         rotateBlock();
     }
@@ -57,7 +59,8 @@ public class Block : MonoBehaviour
         // Move Left
         if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !instantDropping)
         {
-            // Modify position
+            //currentFallRate = fallRate; //This is here to ensure the first block starts falling at the proper speed after
+            // Modify position          // pressing left or right
             transform.position += new Vector3(-1, 0, 0);
 
             // See if it's valid
@@ -105,7 +108,8 @@ public class Block : MonoBehaviour
         // Move Right
         if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !instantDropping)
         {
-            // Modify position
+            //currentFallRate = fallRate; //This is here to ensure the first block starts falling at the proper speed after
+            // Modify position          // pressing left or right
             transform.position += new Vector3(1, 0, 0);
 
             // See if valid

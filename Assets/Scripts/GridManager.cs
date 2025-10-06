@@ -8,6 +8,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] Color cooldownColor; // The color to change ability icons to when they're on cooldown
     [SerializeField] public int gridWidth = 10;
     [SerializeField] public int gridHeight = 25;
+    [SerializeField] GameObject spriteMask1;
+    [SerializeField] GameObject spriteMask2;
     public Transform[,] grid;
     public bool swapAbilityActive = false;
     private bool swapAbilityOnCooldown = false;
@@ -32,11 +34,89 @@ public class GridManager : MonoBehaviour
     private float timeNormalCooldown = 54f;
     private float timeHardCooldown = 65f;
     private GameSession gameSession;
+    private SpriteRenderer swapIconRenderer;
     //[SerializeField] GameObject dropIndicator;
-    
+
     void Awake()
     {
         gameSession = FindObjectOfType<GameSession>();
+        swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+        // if (gameSession.difficulty == 0)
+        // {
+        //     superswapDuration = swapEasyDuration;
+        //     superswapCooldown = swapEasyCooldown;
+
+        //     timestopDuration = timeEasyDuration;
+        //     timestopCooldown = timeEasyCooldown;
+        // }
+        // else if (gameSession.difficulty == 1)
+        // {
+        //     superswapDuration = swapNormalDuration;
+        //     superswapCooldown = swapNormalCooldown;
+
+        //     timestopDuration = timeNormalDuration;
+        //     timestopCooldown = timeNormalCooldown;
+        // }
+        // else if (gameSession.difficulty == 2)
+        // {
+        //     superswapDuration = swapHardDuration;
+        //     superswapCooldown = swapHardCooldown;
+
+        //     timestopDuration = timeHardDuration;
+        //     timestopCooldown = timeHardCooldown;
+        // }
+
+        grid = new Transform[gridWidth, gridHeight];
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //checkForMatch();
+        handleAbilityInputs();
+        //moveDropIndicator();
+        handleAbilityCooldowns();
+    }
+    void LateUpdate()
+    {
+        checkForMatch(); // In LateUpdate so it doesn't interfere with animations
+    }
+
+    private void handleAbilityInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && !swapAbilityActive && !swapAbilityOnCooldown)
+        {
+            swapAbilityActive = true;
+            timeAbilityActive = true;
+            //SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+            swapIconRenderer.color = activatedColor;
+            StartCoroutine("swapAbilityDuration");
+        }
+        else if (Input.GetKeyDown(KeyCode.E) && swapAbilityActive) // Press E Key again while ability is active to cancel early
+        {
+            StopCoroutine("swapAbilityDuration");
+            //SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+            swapIconRenderer.color = cooldownColor;
+            swapAbilityActive = false;
+            timeAbilityActive = false;
+            spriteMask1.transform.position = new Vector3(9, 0, 0);
+            gameSession.ResumeGame();
+            StartCoroutine("swapAbilityCooldown");
+            swapAbilityOnCooldown = true;
+        }
+
+        //  if (Input.GetKeyDown(KeyCode.Q) && !timeAbilityActive && !timeAbilityOnCooldown)
+        // {// Time icon is currently hacked together and may need to change
+        //     timeAbilityActive = true;
+        //     GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
+        //     SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").gameObject.GetComponent<SpriteRenderer>();
+        //     timeIconRenderer.color = activatedColor;
+        //     StartCoroutine(timeAbilityDuration());
+        // }
+    }
+
+    private void handleAbilityCooldowns()
+    {
         if (gameSession.difficulty == 0)
         {
             superswapDuration = swapEasyDuration;
@@ -61,59 +141,21 @@ public class GridManager : MonoBehaviour
             timestopDuration = timeHardDuration;
             timestopCooldown = timeHardCooldown;
         }
-
-        grid = new Transform[gridWidth, gridHeight];
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //checkForMatch();
-        handleAbilityInputs();
-        //moveDropIndicator();
-    }
-    void LateUpdate()
-    {
-        checkForMatch(); // In LateUpdate so it doesn't interfere with animations
-    }
-
-    private void handleAbilityInputs()
-    {
-        if (Input.GetKeyDown(KeyCode.E) && !swapAbilityActive && !swapAbilityOnCooldown)
-        {
-            swapAbilityActive = true;
-            timeAbilityActive = true;
-            SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
-            swapIconRenderer.color = activatedColor;
-            StartCoroutine("swapAbilityDuration");
-        }
-        else if (Input.GetKeyDown(KeyCode.E) && swapAbilityActive) // Press E Key again while ability is active to cancel early
-        {
-            StopCoroutine("swapAbilityDuration");
-            SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
-            swapIconRenderer.color = cooldownColor;
-            swapAbilityActive = false;
-            timeAbilityActive = false;
-            gameSession.ResumeGame();
-            StartCoroutine("swapAbilityCooldown");
-            swapAbilityOnCooldown = true;
-        }
-
-        //  if (Input.GetKeyDown(KeyCode.Q) && !timeAbilityActive && !timeAbilityOnCooldown)
-        // {//! Time icon is currently hacked together and may need to change
-        //     timeAbilityActive = true;
-        //     GameObject timeIcon = transform.Find("Timestop Icon").gameObject;
-        //     SpriteRenderer timeIconRenderer = timeIcon.transform.Find("Circle").gameObject.GetComponent<SpriteRenderer>();
-        //     timeIconRenderer.color = activatedColor;
-        //     StartCoroutine(timeAbilityDuration());
-        // }
+        // print(gameSession.difficulty);
+        // print(superswapDuration);
+        // print(Time.smoothDeltaTime);
     }
 
     private IEnumerator swapAbilityDuration()
     {
         gameSession.PauseGame();
-        yield return new WaitForSecondsRealtime(superswapDuration);
-        SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+        //SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+
+        for (int i = 0; i < 30; i++) //2000 since we are moving 2 units to the left
+        {
+            spriteMask1.transform.position = spriteMask1.transform.position + new Vector3(-0.0667f, 0, 0); //Move mask 1/1000 of the way to the left
+            yield return new WaitForSecondsRealtime(superswapDuration / 30);
+        }
         swapIconRenderer.color = cooldownColor;
         swapAbilityActive = false;
         timeAbilityActive = false;
@@ -124,9 +166,15 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator swapAbilityCooldown()
     {
-        yield return new WaitForSecondsRealtime(superswapCooldown);
-        SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
+        for (int i = 0; i < 30; i++) //1680 since we are moving 1.68 units up
+        {
+            spriteMask2.transform.position = spriteMask2.transform.position + new Vector3(0,0.056f,0); //Move mask 1/1000 of the way up
+            yield return new WaitForSecondsRealtime(superswapCooldown / 30);
+        }
+        //SpriteRenderer swapIconRenderer = transform.Find("Swap Icon").GetComponent<SpriteRenderer>();
         swapIconRenderer.color = Color.white;
+        spriteMask1.transform.position = new Vector3(11, 0, 0);
+        spriteMask2.transform.position = new Vector3(11, -1.68f, 0);
         swapAbilityOnCooldown = false;
         print("Swap cooldown ended");
     }
@@ -351,9 +399,14 @@ public class GridManager : MonoBehaviour
             gameSession.AddToScore(50000);
             MatchPopup.Instance.scorePopup(9, 50000);
         }
-        else if (matchedGems.Count >= 10)
+        else if (matchedGems.Count == 10)
         {
-            int score = 10000 * matchedGems.Count;
+            gameSession.AddToScore(100000);
+            MatchPopup.Instance.scorePopup(10, 100000);
+        }
+        else if (matchedGems.Count >= 11)
+        {
+            int score = 2 ^ (matchedGems.Count - 10) * 100000;
             gameSession.AddToScore(score);
             MatchPopup.Instance.scorePopup(matchedGems.Count, score);
         }
